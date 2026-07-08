@@ -1,0 +1,167 @@
+import type {ViewConfig} from "armonia/src/modules/core/api/auxiliary/private/viewConfig";
+
+export const reviewSheetView: ViewConfig = {
+    model: "reviews",
+    viewType: "sheet",
+    accessModel: "reviews",
+    apiUrl: "/api/eCommerceMarketplace/review",
+    header: {
+        titleField: "listing.title",
+        subtitleKey: "eCommerce.review",
+        showCloseButton: true,
+    },
+    nodes: [
+        {
+            render: "#SheetGroup",
+            props: {title: "overview"},
+            children: [
+                {
+                    render: "#SheetGrid",
+                    props: {columns: 2},
+                    children: [
+                        {
+                            render: "#SmallInfoCard",
+                            permissions: {read: "order"},
+                            field: {
+                                name: "order",
+                                widget: "#SmallInfoCard",
+                                label: "order",
+                                widgetProps: {
+                                    icon: "#Package",
+                                    valuePath: [
+                                        "order.listing.title",
+                                        "order.taskRequest.title",
+                                        "order.name",
+                                        "order._id",
+                                    ],
+                                    pickFirstTruthyValuePath: true,
+                                    linkedRefPath: "order",
+                                    linkedSheetModel: "orders",
+                                    linkedSheetWidget: "#OrderSheetView",
+                                    linkedSheetEntityProp: "order",
+                                    linkedSheetValueField: "listing.title",
+                                },
+                            },
+                        },
+                        {
+                            render: "#SmallInfoCard",
+                            permissions: {read: "reviewer"},
+                            field: {
+                                name: "reviewer",
+                                widget: "#SmallInfoCard",
+                                label: "reviewer",
+                                widgetProps: {
+                                    icon: "#User",
+                                    valuePath: ["reviewer.name", "reviewer.surname"],
+                                    joinSeparator: " ",
+                                },
+                            },
+                        },
+                        {
+                            render: "#SmallInfoCard",
+                            permissions: {read: "rating"},
+                            field: {
+                                name: "rating",
+                                widget: "#SmallInfoCard",
+                                label: "rating",
+                                widgetProps: {icon: "#Star"},
+                            },
+                        },
+                        {
+                            render: "#SmallInfoCard",
+                            permissions: {read: "listing"},
+                            field: {
+                                name: "listing",
+                                widget: "#SmallInfoCard",
+                                label: "listing",
+                                widgetProps: {
+                                    icon: "#LayoutList",
+                                    valuePath: ["listing.title", "listing._id"],
+                                    pickFirstTruthyValuePath: true,
+                                    linkedRefPath: "listing",
+                                    linkedSheetModel: "listings",
+                                    linkedSheetEntityProp: "listing",
+                                    linkedSheetValueField: "title",
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            render: "#SheetGroup",
+            props: {title: "comment"},
+            dependent: "comment",
+            children: [
+                {
+                    render: "div",
+                    props: {className: "p-2 rounded-lg bg-muted/30 border border-border/50"},
+                    children: [
+                        {
+                            render: "#ExpandableText",
+                            permissions: {read: "comment"},
+                            field: {
+                                name: "comment",
+                                widget: "#ExpandableText",
+                                label: "comment",
+                                widgetProps: {className: "text-sm"},
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};
+
+export const reviewCreateFormView: ViewConfig = {
+    model: "reviews",
+    viewType: "form",
+    viewMode: "create",
+    accessModel: "reviews",
+    apiUrl: "/api/eCommerceMarketplace/review",
+    method: "PUT",
+    nodes: [
+        {
+            render: "#FormGrid",
+            props: {columns: 1},
+            children: [
+                {
+                    render: "#Field",
+                    field: {
+                        name: "order",
+                        widget: "#ApiSelect",
+                        label: "form.orderIdLabel",
+                        required: true,
+                        widgetProps: {
+                            apiUrl: "/api/eCommerceMarketplace/order/select",
+                            postBody: {status: "completed", forReview: true},
+                        },
+                    },
+                },
+                {
+                    render: "#Field",
+                    field: {
+                        name: "rating",
+                        widget: "#Input",
+                        label: "form.ratingLabel",
+                        required: true,
+                        widgetProps: {type: "number", min: 1, max: 5, step: 1},
+                    },
+                },
+                {
+                    render: "#Field",
+                    field: {
+                        name: "comment",
+                        widget: "#Textarea",
+                        label: "form.commentLabel",
+                        widgetProps: {className: "min-h-[120px]"},
+                    },
+                },
+            ],
+        },
+    ],
+};
+
+export const reviewViews: ViewConfig[] = [reviewSheetView, reviewCreateFormView];

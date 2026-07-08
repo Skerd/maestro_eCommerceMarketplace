@@ -1,0 +1,228 @@
+import type {ViewConfig} from "armonia/src/modules/core/api/auxiliary/private/viewConfig";
+
+export const bidSheetView: ViewConfig = {
+    model: "bids",
+    viewType: "sheet",
+    accessModel: "bids",
+    apiUrl: "/api/eCommerceMarketplace/bid",
+    header: {
+        titleField: "name",
+        subtitleKey: "bid",
+        showCloseButton: true,
+    },
+    nodes: [
+        {
+            render: "#SheetGroup",
+            props: {title: "overview"},
+            children: [
+                {
+                    render: "#SheetGrid",
+                    props: {columns: 2},
+                    children: [
+                        {
+                            render: "#SmallInfoCard",
+                            permissions: {read: "status"},
+                            field: {
+                                name: "status",
+                                widget: "#SmallInfoCard",
+                                label: "status",
+                                widgetProps: {icon: "#Tag", languageKeyCategory: "bidStatus"},
+                            },
+                        },
+                        {
+                            render: "#SmallInfoCard",
+                            permissions: {read: "amount"},
+                            field: {
+                                name: "amount",
+                                widget: "#SmallInfoCard",
+                                label: "amount",
+                                widgetProps: {
+                                    icon: "#DollarSign",
+                                    format: "locale",
+                                    valuePath: ["currency.symbol", "amount"],
+                                    joinSeparator: " ",
+                                },
+                            },
+                        },
+                        {
+                            render: "#SmallInfoCard",
+                            permissions: {read: "deliveryDays"},
+                            field: {
+                                name: "deliveryDays",
+                                widget: "#SmallInfoCard",
+                                label: "deliveryDays",
+                                widgetProps: {icon: "#Calendar"},
+                            },
+                        },
+                        {
+                            render: "#SmallInfoCard",
+                            permissions: {read: "currency"},
+                            field: {
+                                name: "currency",
+                                widget: "#SmallInfoCard",
+                                label: "currency",
+                                widgetProps: {
+                                    icon: "#Coins",
+                                    valuePath: ["currency.symbol", "currency.name"],
+                                    joinSeparator: " ",
+                                    linkedRefPath: "currency",
+                                    linkedSheetModel: "currencies",
+                                    linkedSheetWidget: "#CurrencySheetView",
+                                    linkedSheetEntityProp: "currency",
+                                    linkedSheetValueField: "name",
+                                },
+                            },
+                        },
+                        // {
+                        //     render: "#SmallInfoCard",
+                        //     permissions: {read: "listing"},
+                        //     field: {
+                        //         name: "listing",
+                        //         widget: "#SmallInfoCard",
+                        //         label: "listing",
+                        //         widgetProps: {
+                        //             icon: "#Package",
+                        //             valuePath: ["listing.title"],
+                        //             linkedRefPath: "listing",
+                        //             linkedSheetModel: "listings",
+                        //             linkedSheetWidget: "#ListingSheetView",
+                        //             linkedSheetEntityProp: "listing",
+                        //             linkedSheetValueField: "title",
+                        //         },
+                        //     },
+                        // },
+                        {
+                            render: "#SmallInfoCard",
+                            permissions: {read: "taskRequest"},
+                            field: {
+                                name: "taskRequest",
+                                widget: "#SmallInfoCard",
+                                label: "taskRequest",
+                                widgetProps: {
+                                    icon: "#Briefcase",
+                                    valuePath: ["taskRequest.title"],
+                                    linkedRefPath: "taskRequest",
+                                    linkedSheetModel: "taskRequests",
+                                    linkedSheetWidget: "#TaskRequestSheetView",
+                                    linkedSheetEntityProp: "entity",
+                                    linkedSheetValueField: "title",
+                                },
+                            },
+                        },
+                        {
+                            render: "#SmallInfoCard",
+                            permissions: {read: "bidder"},
+                            field: {
+                                name: "bidder",
+                                widget: "#SmallInfoCard",
+                                label: "bidder",
+                                widgetProps: {
+                                    icon: "#User",
+                                    valuePath: ["bidder.name", "bidder.surname"],
+                                    joinSeparator: " ",
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            render: "#SheetGroup",
+            props: {title: "proposal"},
+            children: [
+                {
+                    render: "div",
+                    props: {className: "p-4 rounded-lg bg-muted/30 border border-border/50"},
+                    children: [
+                        {
+                            render: "#ExpandableText",
+                            permissions: {read: "proposal"},
+                            field: {
+                                name: "proposal",
+                                widget: "#ExpandableText",
+                                label: "proposal",
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+};
+
+const bidCreateFields: ViewConfig["nodes"] = [
+    {
+        render: "#FormGrid",
+        props: {columns: 3},
+        children: [
+            // {
+            //     render: "#Field",
+            //     field: {
+            //         name: "listing",
+            //         widget: "#ApiSelect",
+            //         label: "form.listingLabel",
+            //         widgetProps: {apiUrl: "/api/eCommerceMarketplace/listing/select"},
+            //     },
+            // },
+            {
+                render: "#Field",
+                field: {
+                    name: "taskRequest",
+                    widget: "#ApiSelect",
+                    label: "form.taskRequestIdLabel",
+                    required: true,
+                    widgetProps: {
+                        apiUrl: "/api/eCommerceMarketplace/taskRequest/select",
+                        postBody: {activeOnly: true},
+                    },
+                },
+            },
+            {
+                render: "#Field",
+                field: {
+                    name: "amount",
+                    widget: "#Input",
+                    label: "form.amountLabel",
+                    placeholder: "form.amountPlaceholder",
+                    required: true,
+                    widgetProps: {type: "number", min: 0, step: "any"},
+                },
+            },
+            {
+                render: "#Field",
+                field: {
+                    name: "deliveryDays",
+                    widget: "#Input",
+                    label: "form.deliveryDaysLabel",
+                    placeholder: "form.deliveryDaysPlaceholder",
+                    required: true,
+                    widgetProps: {type: "number", min: 0, step: 1},
+                },
+            },
+            {
+                render: "#Field",
+                field: {
+                    name: "proposal",
+                    widget: "#Textarea",
+                    label: "form.proposalLabel",
+                    placeholder: "form.proposalPlaceholder",
+                    required: true,
+                    widgetProps: {className: "resize-none max-h-[250px] overflow-y-auto"},
+                },
+            },
+        ],
+    },
+];
+
+export const bidCreateFormView: ViewConfig = {
+    model: "bids",
+    viewType: "form",
+    viewMode: "create",
+    accessModel: "bids",
+    apiUrl: "/api/eCommerceMarketplace/bid",
+    method: "PUT",
+    nodes: bidCreateFields,
+};
+
+export const bidViews: ViewConfig[] = [bidSheetView, bidCreateFormView];
