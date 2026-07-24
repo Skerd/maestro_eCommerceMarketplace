@@ -6,6 +6,7 @@ import {editProviderProfileFormSchema} from "armonia/src/modules/eCommerceMarket
 import {providerProfileListFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/providerProfile/providerProfileList.form.validator";
 import ProviderProfile from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile";
 import {providerProfileService} from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile.service";
+import {ProviderProfileActions} from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile.actions";
 import {
     providerProfileToDTO,
     providerProfilesToDTOArray,
@@ -78,4 +79,6 @@ export const {router} = createCrudRouter({
         return providerProfileToDTO(doc, metrics)!;
     },
     rateLimits: {read: 60, write: 30, delete: 20},
+    // Stripe Connect onboarding: POST /api/eCommerceMarketplace/providerProfile/{createAccountLink|refreshAccountStatus}
+    actions: ProviderProfileActions,
 });

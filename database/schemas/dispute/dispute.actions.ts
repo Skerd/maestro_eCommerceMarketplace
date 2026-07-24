@@ -7,6 +7,7 @@ import type {ActionMessage} from "armonia/src/modules/core/types/shared.types";
 import {orderDeliveryService} from "@eCommerceModule/database/schemas/orderDelivery/orderDelivery.service";
 import {orderService} from "@eCommerceMarketplaceModule/database/schemas/order/order.service";
 import {disputeService} from "@eCommerceMarketplaceModule/database/schemas/dispute/dispute.service";
+import {providerProfileService} from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile.service";
 import {createEscrowRefund, createEscrowReleaseAndFee} from "@eCommerceModule/utilities/escrowHelper";
 import {emitNotificationEvent, NotificationEventCodes} from "@coreModule/domain/notifications/notificationEventBus";
 
@@ -56,12 +57,17 @@ async function resolveOrderCompletingEscrow(order: any, params: Record<string, a
     const {orderAmount, currencyId, companyId} = parseOrderRefs(order);
     const hadEscrowEligibleStatus = delivery || ["accepted", "in_progress"].includes(currentStatus);
     if (orderAmount > 0 && currencyId && companyId && hadEscrowEligibleStatus) {
+        const disputeProviderId = order.provider?._id || order.provider;
+        const providerStripeAccountId = disputeProviderId
+            ? await providerProfileService.getPayoutAccountId(disputeProviderId, companyId as ObjectId, {session, logger, languageCode})
+            : undefined;
         await createEscrowReleaseAndFee(
             order._id,
             orderAmount,
             currencyId as ObjectId,
             companyId as ObjectId,
             {session, logger, languageCode, auditUserId: actionUserCtx.userId},
+            {providerStripeAccountId},
         );
     }
 

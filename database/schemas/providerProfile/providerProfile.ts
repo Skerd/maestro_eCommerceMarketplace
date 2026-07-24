@@ -22,6 +22,12 @@ export interface IProviderProfile extends Document, IOwnershipPluginFields, ISof
     skills?: string[];
     bio?: string;
     portfolio?: IMedia[];
+    /** Stripe Connect Express account (payouts destination). System-managed via providerProfile actions. */
+    stripeAccountId?: string;
+    stripeChargesEnabled?: boolean;
+    stripePayoutsEnabled?: boolean;
+    stripeDetailsSubmitted?: boolean;
+    stripeAccountSyncedAt?: Date;
 }
 
 const ProviderProfileSchema = new Schema<IProviderProfile>(
@@ -51,6 +57,11 @@ const ProviderProfileSchema = new Schema<IProviderProfile>(
             ],
             default: [],
         },
+        stripeAccountId: {type: SchemaTypes.String, trim: true},
+        stripeChargesEnabled: {type: SchemaTypes.Boolean, default: false},
+        stripePayoutsEnabled: {type: SchemaTypes.Boolean, default: false},
+        stripeDetailsSubmitted: {type: SchemaTypes.Boolean, default: false},
+        stripeAccountSyncedAt: {type: SchemaTypes.Date},
     },
     {
         accessMode: "loose",
@@ -66,4 +77,8 @@ normalizeSchemaPermissions(ProviderProfile);
 export default ProviderProfile;
 
 addModelData(ProviderProfile, providerProfileViews);
-validateSchemaDefAgainstMongoose(ProviderProfileSchema, ProviderProfileSchemaDef, "ProviderProfile", ["user"]);
+validateSchemaDefAgainstMongoose(ProviderProfileSchema, ProviderProfileSchemaDef, "ProviderProfile", [
+    "user",
+    // Stripe Connect fields are system-managed (actions + webhooks), never form-writable
+    "stripeAccountId", "stripeChargesEnabled", "stripePayoutsEnabled", "stripeDetailsSubmitted", "stripeAccountSyncedAt",
+]);

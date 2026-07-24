@@ -4,12 +4,31 @@
  * CRUD service for ProviderProfile model.
  */
 
-import { BaseCrudService } from "@coreModule/database/services/baseCrudService";
+import { ObjectId } from "mongodb";
+import {BaseCrudService, CrudOptions} from "@coreModule/database/services/baseCrudService";
 import ProviderProfile, {IProviderProfile} from "./providerProfile";
 
 export class ProviderProfileService extends BaseCrudService<IProviderProfile, typeof ProviderProfile> {
     constructor() {
         super(ProviderProfile, "ProviderProfile");
+    }
+
+    /**
+     * Connect account for escrow release transfers: only returned when the
+     * provider finished onboarding and Stripe reports payouts enabled.
+     */
+    async getPayoutAccountId(
+        providerUserId: ObjectId | string,
+        companyId: ObjectId,
+        opts: CrudOptions,
+    ): Promise<string | undefined> {
+        const profile = await ProviderProfile.findOne(
+            {user: new ObjectId(providerUserId.toString()), company: companyId, deletedAt: null},
+            {stripeAccountId: 1, stripePayoutsEnabled: 1},
+            {session: opts.session},
+        );
+        if (!profile?.stripeAccountId || !profile.stripePayoutsEnabled) return undefined;
+        return profile.stripeAccountId;
     }
 }
 

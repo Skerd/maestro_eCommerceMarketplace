@@ -32,6 +32,13 @@ export function providerProfileToDTO(
         averageRating: metrics?.averageRating,
         reviewCount: metrics?.reviewCount,
         completionRate: metrics?.completionRate,
+        stripeAccountId: (profile as any).stripeAccountId || undefined,
+        stripeChargesEnabled: !!(profile as any).stripeChargesEnabled,
+        stripePayoutsEnabled: !!(profile as any).stripePayoutsEnabled,
+        stripeDetailsSubmitted: !!(profile as any).stripeDetailsSubmitted,
+        stripeAccountSyncedAt: (profile as any).stripeAccountSyncedAt
+            ? new Date((profile as any).stripeAccountSyncedAt).toISOString()
+            : undefined,
     };
 }
 

@@ -15,6 +15,7 @@ import {disputeService} from "@eCommerceMarketplaceModule/database/schemas/dispu
 import {listingService} from "@eCommerceMarketplaceModule/database/schemas/listing/listing.service";
 import {listingPackageService} from "@eCommerceMarketplaceModule/database/schemas/listingPackage/listingPackage.service";
 import {listingAddOnService} from "@eCommerceMarketplaceModule/database/schemas/listingAddOn/listingAddOn.service";
+import {providerProfileService} from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile.service";
 import {orderService} from "@eCommerceMarketplaceModule/database/schemas/order/order.service";
 import {createEscrowHold, createEscrowRefund, createEscrowReleaseAndFee} from "@eCommerceModule/utilities/escrowHelper";
 import {emitNotificationEvent, NotificationEventCodes} from "@coreModule/domain/notifications/notificationEventBus";
@@ -481,14 +482,19 @@ export class OrderActions {
             : parseFloat(String((order as any).amount || 0));
         const currencyId = (order as any).currency?._id || (order as any).currency;
         const companyId = (order as any).company?._id || (order as any).company;
+        const releaseProviderId = (order as any).provider?._id || (order as any).provider;
 
         if (orderAmount > 0 && currencyId && companyId) {
+            const providerStripeAccountId = releaseProviderId
+                ? await providerProfileService.getPayoutAccountId(releaseProviderId, companyId, {session, logger, languageCode})
+                : undefined;
             await createEscrowReleaseAndFee(
                 order._id,
                 orderAmount,
                 currencyId,
                 companyId,
                 {session, logger, languageCode, auditUserId: actionUserCtx.userId},
+                {providerStripeAccountId},
             );
         }
 
