@@ -1,4 +1,5 @@
 import type {Model} from "mongoose";
+import ListingCategory from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory";
 import Listing from "@eCommerceMarketplaceModule/database/schemas/listing/listing";
 import TaskRequest from "@eCommerceMarketplaceModule/database/schemas/taskRequest/taskRequest";
 import Bid from "@eCommerceMarketplaceModule/database/schemas/bid/bid";
@@ -12,8 +13,12 @@ import Booking from "@eCommerceMarketplaceModule/database/schemas/booking/bookin
 import Dispute from "@eCommerceMarketplaceModule/database/schemas/dispute/dispute";
 import Promotion from "@eCommerceMarketplaceModule/database/schemas/promotion/promotion";
 import ListingFlag from "@eCommerceMarketplaceModule/database/schemas/listingFlag/listingFlag";
+import OrderDelivery from "@eCommerceMarketplaceModule/database/schemas/orderDelivery/orderDelivery";
+import OrderMilestone from "@eCommerceMarketplaceModule/database/schemas/orderMilestone/orderMilestone";
+import OrderRevision from "@eCommerceMarketplaceModule/database/schemas/orderRevision/orderRevision";
 
 export const eCommerceMarketplaceModels: Model<any>[] = [
+    ListingCategory,
     Listing,
     TaskRequest,
     Bid,
@@ -27,6 +32,9 @@ export const eCommerceMarketplaceModels: Model<any>[] = [
     Dispute,
     Promotion,
     ListingFlag,
+    OrderDelivery,
+    OrderMilestone,
+    OrderRevision,
 ];
 
 export async function dropECommerceMarketplaceCollections(): Promise<void> {

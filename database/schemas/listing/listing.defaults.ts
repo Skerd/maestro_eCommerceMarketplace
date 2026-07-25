@@ -1,6 +1,6 @@
 import path from "path";
 import Listing, {type IListing, type ListingStatus, type PricingType} from "./listing";
-import ListingCategory from "@eCommerceModule/database/schemas/category/category";
+import ListingCategory from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory";
 import {getLogger, serverLogger} from "@coreModule/loggers/serverLog";
 import {ICompany} from "@coreModule/database/schemas/company/company";
 import {IUser} from "@coreModule/database/schemas/user/user";

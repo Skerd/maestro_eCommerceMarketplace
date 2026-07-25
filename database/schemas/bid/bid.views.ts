@@ -1,9 +1,9 @@
 import type {ViewConfig} from "armonia/src/modules/core/api/auxiliary/private/viewConfig";
 
 export const bidSheetView: ViewConfig = {
-    model: "bids",
+    model: "marketplacebids",
     viewType: "sheet",
-    accessModel: "bids",
+    accessModel: "marketplacebids",
     apiUrl: "/api/eCommerceMarketplace/bid",
     header: {
         titleField: "name",
@@ -216,10 +216,10 @@ const bidCreateFields: ViewConfig["nodes"] = [
 ];
 
 export const bidCreateFormView: ViewConfig = {
-    model: "bids",
+    model: "marketplacebids",
     viewType: "form",
     viewMode: "create",
-    accessModel: "bids",
+    accessModel: "marketplacebids",
     apiUrl: "/api/eCommerceMarketplace/bid",
     method: "PUT",
     nodes: bidCreateFields,

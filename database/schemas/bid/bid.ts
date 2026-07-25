@@ -109,9 +109,10 @@ ownershipPlugin(BidSchema);
 softDeletePlugin(BidSchema);
 auditPlugin(BidSchema);
 applyBidIndexes(BidSchema);
-const Bid = model<IBid>("Bid", BidSchema);
+/** Distinct from propertyManagement `Bid` (tender bids) — shared mongoose name would overwrite. */
+const Bid = model<IBid>("MarketplaceBid", BidSchema, "marketplacebids");
 normalizeSchemaPermissions(Bid);
 export default Bid;
 
 addModelData(Bid, bidViews);
-validateSchemaDefAgainstMongoose(BidSchema, BidSchemaDef, "Bid", ["status", "currency", "bidder"]);
+validateSchemaDefAgainstMongoose(BidSchema, BidSchemaDef, "MarketplaceBid", ["status", "currency", "bidder"]);

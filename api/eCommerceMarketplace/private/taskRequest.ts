@@ -13,7 +13,7 @@ import {listingService} from "@eCommerceMarketplaceModule/database/schemas/listi
 import {emitNotificationEvent, NotificationEventCodes} from "@coreModule/domain/notifications/notificationEventBus";
 import {taskRequestToDTO, taskRequestsToDTO} from "@eCommerceMarketplaceModule/utilities/mappers/taskRequest/taskRequestMapper.dto";
 import {taskRequestsToSelect} from "@eCommerceMarketplaceModule/utilities/mappers/taskRequest/taskRequestMapper.select";
-import {categoryService} from "@eCommerceModule/database/schemas/category/category.service";
+import {listingCategoryService} from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory.service";
 import {currencyService} from "@coreModule/database/schemas/currency/currency.service";
 import {countryService} from "@coreModule/database/schemas/country/country.service";
 import {cityService} from "@coreModule/database/schemas/city/city.service";
@@ -124,7 +124,7 @@ export const {router} = createCrudRouter({
     },
     buildCreateData: async ({title, description, category, budgetMin, budgetMax, currency, address, mainImage, imageGallery, videoGallery, actionUserCtx, company, logger, languageCode,session,}) => {
         const [foundCategory, foundCurrency, foundCountry, foundCity] = await Promise.all([
-            categoryService.findOneOrThrow({_id: new ObjectId(category), company: company._id}, {logger, languageCode, session}),
+            listingCategoryService.findOneOrThrow({_id: new ObjectId(category), company: company._id}, {logger, languageCode, session}),
             currencyService.findOneOrThrow({_id: new ObjectId(currency), company: company._id}, {logger, languageCode, session}),
             countryService.findOneOrThrow({ company: company._id, _id: new ObjectId(address.country) }, { session, logger, languageCode }),
             cityService.findOneOrThrow({ company: company._id, _id: new ObjectId(address.city), country: new ObjectId(address.country) }, { session, logger, languageCode }),
@@ -163,7 +163,7 @@ export const {router} = createCrudRouter({
         if (description !== undefined && writeFields.description) update.description = description?.trim() || "";
         if (category !== undefined && writeFields.category) {
             if (category) {
-                update.category = await categoryService.findOneOrThrow({_id: new ObjectId(category), company: company._id}, {logger, languageCode, session});
+                update.category = await listingCategoryService.findOneOrThrow({_id: new ObjectId(category), company: company._id}, {logger, languageCode, session});
             } else {
                 update.category = null;
             }

@@ -4,11 +4,11 @@ import {validateSingleForm} from "armonia/src/modules/core/utilities/zod/shared.
 import {resolveDisputeActionFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/dispute/resolveDispute.action.validator";
 import {apiValidationException, DEFAULT_EXCEPTION_LANGUAGE} from "armonia/src/modules/core/helpers/exceptions";
 import type {ActionMessage} from "armonia/src/modules/core/types/shared.types";
-import {orderDeliveryService} from "@eCommerceModule/database/schemas/orderDelivery/orderDelivery.service";
+import {orderDeliveryService} from "@eCommerceMarketplaceModule/database/schemas/orderDelivery/orderDelivery.service";
 import {orderService} from "@eCommerceMarketplaceModule/database/schemas/order/order.service";
 import {disputeService} from "@eCommerceMarketplaceModule/database/schemas/dispute/dispute.service";
 import {providerProfileService} from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile.service";
-import {createEscrowRefund, createEscrowReleaseAndFee} from "@eCommerceModule/utilities/escrowHelper";
+import {createEscrowRefund, createEscrowReleaseAndFee} from "@financeModule/utilities/escrowHelper";
 import {emitNotificationEvent, NotificationEventCodes} from "@coreModule/domain/notifications/notificationEventBus";
 
 function ensureAdmin(actionUserCtx: Record<string, any>, languageCode: string | undefined): void {

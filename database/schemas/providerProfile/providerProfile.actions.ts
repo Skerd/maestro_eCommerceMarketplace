@@ -4,7 +4,7 @@ import type {ActionMessage} from "armonia/src/modules/core/types/shared.types";
 import {CLIENT_SIDE, PAYMENTS} from "@coreModule/environment";
 import ProviderProfile from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile";
 import {providerProfileService} from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile.service";
-import {stripeConnectAdapter} from "@eCommerceModule/utilities/services/payment/stripeConnectAdapter";
+import {stripeConnectAdapter} from "@financeModule/utilities/services/payment/stripeConnectAdapter";
 
 type ConnectOnboardingResult = ActionMessage & {
     url?: string;

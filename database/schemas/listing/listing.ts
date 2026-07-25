@@ -17,7 +17,7 @@ import { StateSimpleSnippet } from "@coreModule/database/schemas/state/state.sni
 import { CitySimpleSnippet } from "@coreModule/database/schemas/city/city.snippets";
 import { MediaSimpleSnippet } from "@coreModule/database/schemas/media/media.snippets";
 import { SimpleUserSnippet } from "@coreModule/database/schemas/user/user.snippets";
-import { CategorySimpleSnippet } from "@eCommerceModule/database/schemas/category/category.snippets";
+import { ListingCategorySimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory.snippets";
 import { PromotionSimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas/promotion/promotion.snippets";
 import {validateSchemaDefAgainstMongoose} from "@coreModule/database/utilities/validateSchemaDefAgainstMongoose";
 import {ListingSchemaDef} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listing/listing.schema-def";
@@ -26,7 +26,7 @@ import { listingViews } from "./listing.views";
 import {ICountry} from "@coreModule/database/schemas/country/country";
 import {IState} from "@coreModule/database/schemas/state/state";
 import {ICity} from "@coreModule/database/schemas/city/city";
-import {ICategory} from "@eCommerceModule/database/schemas/category/category";
+import {IListingCategory} from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory";
 
 export type ListingStatus = "draft" | "active" | "inactive";
 export type PricingType = "fixed" | "hourly";
@@ -35,7 +35,7 @@ export interface IListing extends Document, IOwnershipPluginFields, ISoftDeleteP
     name: string;
     title: string;
     description?: string;
-    category: ICategory;
+    category: IListingCategory;
     provider: IUser;
     price?: number;
     priceCurrency?: ICurrency;
@@ -82,7 +82,7 @@ const ListingSchema = new Schema<IListing>(
             type: SchemaTypes.ObjectId,
             ref: "ListingCategory",
             required: true,
-            refAllowlist: CategorySimpleSnippet,
+            refAllowlist: ListingCategorySimpleSnippet,
         },
         provider: {
             type: SchemaTypes.ObjectId,

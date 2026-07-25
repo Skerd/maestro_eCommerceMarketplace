@@ -358,7 +358,7 @@ const taskRequestFormFields: ViewConfig["nodes"] = [
                             name: "category",
                             widget: "#ApiSelect",
                             label: "form.categoryLabel",
-                            widgetProps: { apiUrl: "/api/eCommerce/category/select" },
+                            widgetProps: { apiUrl: "/api/eCommerceMarketplace/listingCategory/select" },
                         },
                     },
                 ],

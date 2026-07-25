@@ -7,7 +7,7 @@ import {editListingFormSchema} from "armonia/src/modules/eCommerceMarketplace/ap
 import {listingTableFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listing/listing.form.validator";
 import {listingSelectFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listing/listing.select.form.validator";
 import {listingService} from "@eCommerceMarketplaceModule/database/schemas/listing/listing.service";
-import {categoryService} from "@eCommerceModule/database/schemas/category/category.service";
+import {listingCategoryService} from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory.service";
 import {currencyService} from "@coreModule/database/schemas/currency/currency.service";
 import {promotionService} from "@eCommerceMarketplaceModule/database/schemas/promotion/promotion.service";
 import {listingToDTO, listingsToDTO} from "@eCommerceMarketplaceModule/utilities/mappers/listing/listingMapper.dto";
@@ -145,7 +145,7 @@ export const {router} = createCrudRouter({
     },
 
     buildCreateData: async ({title, description, category, price, priceCurrency, pricingType, deliveryDays, address, mainImage, imageGallery, videoGallery, faqs, requirements, tags, actionUserCtx, company, logger, languageCode, session, userInfo}) => {
-        let foundCategory = await categoryService.findOneOrThrow({_id: new ObjectId(category), company: company._id}, {logger, languageCode, session},);
+        let foundCategory = await listingCategoryService.findOneOrThrow({_id: new ObjectId(category), company: company._id}, {logger, languageCode, session},);
         const data: Record<string, unknown> = {
             title,
             description: description,
@@ -187,7 +187,7 @@ export const {router} = createCrudRouter({
         if (description !== undefined && writeFields.description) update.description = description;
         if (category !== undefined && writeFields.category) {
             if (category) {
-                update.category = await categoryService.findOneOrThrow({_id: new ObjectId(category), company: company._id}, {logger, languageCode, session});
+                update.category = await listingCategoryService.findOneOrThrow({_id: new ObjectId(category), company: company._id}, {logger, languageCode, session});
             } else {
                 update.category = null;
             }

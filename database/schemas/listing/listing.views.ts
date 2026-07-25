@@ -488,7 +488,7 @@ const listingFormFields: ViewConfig["nodes"] = [
                             widget: "#ApiSelect",
                             label: "form.categoryLabel",
                             placeholder: "form.categoryPlaceholder",
-                            widgetProps: {apiUrl: "/api/eCommerce/category/select"},
+                            widgetProps: {apiUrl: "/api/eCommerceMarketplace/listingCategory/select"},
                         },
                     },
                     {

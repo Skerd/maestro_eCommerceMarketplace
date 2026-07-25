@@ -160,7 +160,7 @@ export const orderSheetView: ViewConfig = {
                                     icon: "#FileText",
                                     valuePath: ["bid.name"],
                                     linkedRefPath: "bid",
-                                    linkedSheetModel: "bids",
+                                    linkedSheetModel: "marketplacebids",
                                     linkedSheetWidget: "#BidSheetView",
                                     linkedSheetEntityProp: "bid",
                                     linkedSheetValueField: "name",

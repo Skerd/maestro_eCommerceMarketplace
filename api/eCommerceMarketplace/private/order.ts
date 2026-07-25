@@ -6,7 +6,7 @@ import {OrderActions} from "@eCommerceMarketplaceModule/database/schemas/order/o
 import Order from "@eCommerceMarketplaceModule/database/schemas/order/order";
 import {orderService} from "@eCommerceMarketplaceModule/database/schemas/order/order.service";
 import {reviewService} from "@eCommerceMarketplaceModule/database/schemas/review/review.service";
-import {orderDeliveryService} from "@eCommerceModule/database/schemas/orderDelivery/orderDelivery.service";
+import {orderDeliveryService} from "@eCommerceMarketplaceModule/database/schemas/orderDelivery/orderDelivery.service";
 import {orderToDTO, ordersToDTO} from "@eCommerceMarketplaceModule/utilities/mappers/orders/orderMapper.dto";
 import {ordersToSelect} from "@eCommerceMarketplaceModule/utilities/mappers/orders/orderMapper.select";
 import {disputeService} from "@eCommerceMarketplaceModule/database/schemas/dispute/dispute.service";

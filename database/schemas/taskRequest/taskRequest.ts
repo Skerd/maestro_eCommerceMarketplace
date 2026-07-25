@@ -2,7 +2,7 @@ import { Document, model, Schema, SchemaTypes } from "mongoose";
 import { IMedia } from "@coreModule/database/schemas/media/media";
 import { IUser } from "@coreModule/database/schemas/user/user";
 import { ICurrency } from "@coreModule/database/schemas/currency/currency";
-import { ICategory } from "@eCommerceModule/database/schemas/category/category";
+import { IListingCategory } from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory";
 import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
@@ -13,7 +13,7 @@ import { addModelData } from "@coreModule/database/collections";
 import { CurrencySimpleSnippet } from "@coreModule/database/schemas/currency/currency.snippets";
 import { SimpleUserSnippet } from "@coreModule/database/schemas/user/user.snippets";
 import { MediaSimpleSnippet } from "@coreModule/database/schemas/media/media.snippets";
-import { CategorySimpleSnippet } from "@eCommerceModule/database/schemas/category/category.snippets";
+import { ListingCategorySimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory.snippets";
 import { CountrySimpleSnippet } from "@coreModule/database/schemas/country/country.snippets";
 import { StateSimpleSnippet } from "@coreModule/database/schemas/state/state.snippets";
 import { CitySimpleSnippet } from "@coreModule/database/schemas/city/city.snippets";
@@ -34,7 +34,7 @@ export interface ITaskRequest extends Document, IOwnershipPluginFields, ISoftDel
     name: string;
     title: string;
     description: string;
-    category?: ICategory;
+    category?: IListingCategory;
     budgetMin?: number;
     budgetMax?: number;
     currency?: ICurrency;
@@ -108,7 +108,7 @@ const TaskRequestSchema = new Schema<ITaskRequest>(
             type: SchemaTypes.ObjectId,
             ref: "ListingCategory",
             required: true,
-            refAllowlist: CategorySimpleSnippet,
+            refAllowlist: ListingCategorySimpleSnippet,
             dynamicTableConfiguration: {
                 filterable: true,
                 sortable: true,

@@ -62,7 +62,7 @@ const OrderSchema = new Schema<IOrder>(
         },
         bid: {
             type: SchemaTypes.ObjectId,
-            ref: "Bid",
+            ref: "MarketplaceBid",
             refAllowlist: BidSimpleSnippet,
         },
         customer: {

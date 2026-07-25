@@ -15,10 +15,10 @@ import SchemaGuard from "@coreModule/database/security/schemaGuard";
 
 export const basePath = "/api/eCommerceMarketplace/bid";
 export const {router} = createCrudRouter({
-    collectionName: "bids",
+    collectionName: "marketplacebids",
     model: Bid,
     service: bidService,
-    entityName: "Bid",
+    entityName: "MarketplaceBid",
     defaultSort: {createdAt: -1},
     listSchema: bidListFormSchema,
     createSchema: createBidFormSchema,

@@ -3,7 +3,7 @@ import {BaseCrudService} from "@coreModule/database/services/baseCrudService";
 
 export class BidService extends BaseCrudService<IBid, typeof Bid> {
     constructor() {
-        super(Bid, "Bid");
+        super(Bid, "MarketplaceBid");
     }
 }
 

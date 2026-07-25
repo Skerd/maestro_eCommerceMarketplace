@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import {ObjectId} from "mongodb";
 import type {HydratedDocument} from "mongoose";
 import TaskRequest, {type ITaskRequest, type TaskRequestStatus} from "./taskRequest";
-import ListingCategory from "@eCommerceModule/database/schemas/category/category";
+import ListingCategory from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory";
 import {getLogger, serverLogger} from "@coreModule/loggers/serverLog";
 import {ICompany} from "@coreModule/database/schemas/company/company";
 import {IUser} from "@coreModule/database/schemas/user/user";
