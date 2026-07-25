@@ -18,7 +18,8 @@ import {listingAddOnService} from "@eCommerceMarketplaceModule/database/schemas/
 import {providerProfileService} from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile.service";
 import {orderService} from "@eCommerceMarketplaceModule/database/schemas/order/order.service";
 import {createEscrowHold, createEscrowRefund, createEscrowReleaseAndFee} from "@financeModule/utilities/escrowHelper";
-import {emitNotificationEvent, NotificationEventCodes} from "@coreModule/domain/notifications/notificationEventBus";
+import {emitNotificationEvent} from "@coreModule/domain/notifications/notificationEventBus";
+import {NotificationEventCodes} from "@eCommerceMarketplaceModule/domain/notifications/notificationEventCodes";
 import type {ActionMessage} from "armonia/src/modules/core/types/shared.types";
 
 const MAX_REVISIONS = 3;

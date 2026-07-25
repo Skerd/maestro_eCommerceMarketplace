@@ -7,7 +7,8 @@ import {ITaskRequest} from "@eCommerceMarketplaceModule/database/schemas/taskReq
 import {taskRequestService} from "@eCommerceMarketplaceModule/database/schemas/taskRequest/taskRequest.service";
 import {listingService} from "@eCommerceMarketplaceModule/database/schemas/listing/listing.service";
 import {bidService} from "@eCommerceMarketplaceModule/database/schemas/bid/bid.service";
-import {emitNotificationEvent, NotificationEventCodes} from "@coreModule/domain/notifications/notificationEventBus";
+import {emitNotificationEvent} from "@coreModule/domain/notifications/notificationEventBus";
+import {NotificationEventCodes} from "@eCommerceMarketplaceModule/domain/notifications/notificationEventCodes";
 import type {ActionMessage} from "armonia/src/modules/core/types/shared.types";
 
 function assertMayChangeTaskRequestStatus(doc: ITaskRequest, actionUserCtx: UserContext, languageCode: string | undefined = DEFAULT_EXCEPTION_LANGUAGE): void {

@@ -5,7 +5,8 @@ import {apiValidationException} from "armonia/src/modules/core/helpers/exception
 import {bidService} from "@eCommerceMarketplaceModule/database/schemas/bid/bid.service";
 import {orderService} from "@eCommerceMarketplaceModule/database/schemas/order/order.service";
 import {taskRequestService} from "@eCommerceMarketplaceModule/database/schemas/taskRequest/taskRequest.service";
-import {emitNotificationEvent, NotificationEventCodes} from "@coreModule/domain/notifications/notificationEventBus";
+import {emitNotificationEvent} from "@coreModule/domain/notifications/notificationEventBus";
+import {NotificationEventCodes} from "@eCommerceMarketplaceModule/domain/notifications/notificationEventCodes";
 import {ActionMessage} from "armonia/src/modules/core/types/shared.types";
 
 export class BidActions {

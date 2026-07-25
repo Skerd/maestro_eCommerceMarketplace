@@ -9,7 +9,8 @@ import {orderService} from "@eCommerceMarketplaceModule/database/schemas/order/o
 import {disputeService} from "@eCommerceMarketplaceModule/database/schemas/dispute/dispute.service";
 import {providerProfileService} from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile.service";
 import {createEscrowRefund, createEscrowReleaseAndFee} from "@financeModule/utilities/escrowHelper";
-import {emitNotificationEvent, NotificationEventCodes} from "@coreModule/domain/notifications/notificationEventBus";
+import {emitNotificationEvent} from "@coreModule/domain/notifications/notificationEventBus";
+import {NotificationEventCodes} from "@eCommerceMarketplaceModule/domain/notifications/notificationEventCodes";
 
 function ensureAdmin(actionUserCtx: Record<string, any>, languageCode: string | undefined): void {
     if (!actionUserCtx.isAdmin) {

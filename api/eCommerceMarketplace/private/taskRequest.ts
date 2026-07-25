@@ -10,7 +10,8 @@ import TaskRequest from "@eCommerceMarketplaceModule/database/schemas/taskReques
 import {taskRequestService} from "@eCommerceMarketplaceModule/database/schemas/taskRequest/taskRequest.service";
 import {bidService} from "@eCommerceMarketplaceModule/database/schemas/bid/bid.service";
 import {listingService} from "@eCommerceMarketplaceModule/database/schemas/listing/listing.service";
-import {emitNotificationEvent, NotificationEventCodes} from "@coreModule/domain/notifications/notificationEventBus";
+import {emitNotificationEvent} from "@coreModule/domain/notifications/notificationEventBus";
+import {NotificationEventCodes} from "@eCommerceMarketplaceModule/domain/notifications/notificationEventCodes";
 import {taskRequestToDTO, taskRequestsToDTO} from "@eCommerceMarketplaceModule/utilities/mappers/taskRequest/taskRequestMapper.dto";
 import {taskRequestsToSelect} from "@eCommerceMarketplaceModule/utilities/mappers/taskRequest/taskRequestMapper.select";
 import {listingCategoryService} from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory.service";
