@@ -58,8 +58,8 @@ export const listingCategorySheetView: ViewConfig = {
                                 widgetProps: {
                                     icon: "#IconCategory2",
                                     linkedRefPath: "parent",
-                                    linkedSheetModel: "listingCategories",
-                                    linkedSheetWidget: "#CategorySheetView",
+                                    linkedSheetModel: "listingcategories",
+                                    linkedSheetWidget: "#ListingCategorySheetView",
                                     linkedSheetEntityProp: "parent",
                                 },
                             },
