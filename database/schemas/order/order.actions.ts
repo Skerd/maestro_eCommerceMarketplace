@@ -20,9 +20,13 @@ import {orderService} from "@eCommerceMarketplaceModule/database/schemas/order/o
 import {createEscrowHold, createEscrowRefund, createEscrowReleaseAndFee} from "@financeModule/utilities/escrowHelper";
 import {emitNotificationEvent} from "@coreModule/domain/notifications/notificationEventBus";
 import {NotificationEventCodes} from "@eCommerceMarketplaceModule/domain/notifications/notificationEventCodes";
+import {completeSubmittedDeliveryAndRelease} from "@eCommerceMarketplaceModule/database/schemas/order/orderDeliveryCompletion";
+import {orderMilestoneService} from "@eCommerceMarketplaceModule/database/schemas/orderMilestone/orderMilestone.service";
+import OrderMilestone from "@eCommerceMarketplaceModule/database/schemas/orderMilestone/orderMilestone";
+import {createOrderMilestoneFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/orderMilestone/createOrderMilestone.form.validator";
+import {releaseOrderMilestoneFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/orderMilestone/releaseOrderMilestone.form.validator";
 import type {ActionMessage} from "armonia/src/modules/core/types/shared.types";
-
-const MAX_REVISIONS = 3;
+import {getECommerceMarketplaceConfig} from "@eCommerceMarketplaceModule/utilities/config";
 
 export class OrderActions {
     @action({
@@ -466,52 +470,13 @@ export class OrderActions {
             throw apiValidationException("no_pending_delivery", null, null, languageCode);
         }
 
-        await orderDeliveryService.updateByIdOrThrow(
-            delivery._id,
-            {$set: {status: "accepted"}},
-            {session, logger, languageCode, auditUserId: actionUserCtx.userId},
-        );
-
-        await orderService.updateByIdOrThrow(
-            order._id,
-            {$set: {status: "completed"}},
-            {session, logger, languageCode, auditUserId: actionUserCtx.userId},
-        );
-
-        const orderAmount = typeof (order as any).amount === "number"
-            ? (order as any).amount
-            : parseFloat(String((order as any).amount || 0));
-        const currencyId = (order as any).currency?._id || (order as any).currency;
-        const companyId = (order as any).company?._id || (order as any).company;
-        const releaseProviderId = (order as any).provider?._id || (order as any).provider;
-
-        if (orderAmount > 0 && currencyId && companyId) {
-            const providerStripeAccountId = releaseProviderId
-                ? await providerProfileService.getPayoutAccountId(releaseProviderId, companyId, {session, logger, languageCode})
-                : undefined;
-            await createEscrowReleaseAndFee(
-                order._id,
-                orderAmount,
-                currencyId,
-                companyId,
-                {session, logger, languageCode, auditUserId: actionUserCtx.userId},
-                {providerStripeAccountId},
-            );
-        }
-
-        const providerId = (order as any).provider?._id || (order as any).provider;
-        const providerIdStr = providerId?.toString?.() ?? "";
-        if (providerIdStr) {
-            emitNotificationEvent(NotificationEventCodes.ORDER_DELIVERY_ACCEPTED, {
-                receiverIds: [providerIdStr],
-                payload: {
-                    companyId: companyId?.toString?.() ?? company._id.toString(),
-                    languageCode,
-                    orderId: order._id.toString(),
-                    orderName: (order as any).name ?? "",
-                },
-            });
-        }
+        await completeSubmittedDeliveryAndRelease(order, delivery, {
+            session,
+            logger,
+            languageCode,
+            auditUserId: actionUserCtx.userId,
+            notifyProvider: true,
+        });
 
         logger.finish(`Successfully accepted delivery for order: ${_id}`);
 
@@ -557,7 +522,8 @@ export class OrderActions {
             {order: order._id, company: company._id},
             {session, logger, languageCode},
         );
-        if (revisionCount >= MAX_REVISIONS) {
+        const {maxRevisions} = getECommerceMarketplaceConfig();
+        if (revisionCount >= maxRevisions) {
             throw apiValidationException("max_revisions_reached", null, null, languageCode);
         }
 
@@ -600,5 +566,159 @@ export class OrderActions {
         logger.finish(`Successfully requested revision for order: ${_id}`);
 
         return {message: "Revision requested successfully"};
+    }
+
+    @action({
+        auth: "private",
+        rateLimit: {windowMs: 60000, max: 30},
+        transaction: true,
+        schema: createOrderMilestoneFormSchema,
+    })
+    async createMilestone(params: Record<string, any>): Promise<ActionMessage> {
+        const {logger, languageCode, session, company, actionUserCtx, orderId, name, amount, currencyId, orderIndex} = params;
+
+        logger.start(`Creating milestone for order: ${orderId}...`);
+
+        const order = await orderService.findOneOrThrow(
+            {_id: new ObjectId(orderId), company: company._id},
+            {session, logger, languageCode},
+        );
+
+        const customerId = (order as any).customer?._id || (order as any).customer;
+        if (customerId?.toString?.() !== actionUserCtx.userId?.toString?.() && !actionUserCtx.isAdmin) {
+            throw apiValidationException("only_customer_can_create_milestone", null, null, languageCode);
+        }
+
+        const existingMilestones = await orderMilestoneService.find(
+            {order: new ObjectId(orderId), company: company._id},
+            {session, logger, languageCode},
+            null,
+            "amount",
+            {},
+            100,
+            0,
+        );
+        const existingTotal = existingMilestones.reduce(
+            (sum: number, m: any) => sum + (typeof m.amount === "number" ? m.amount : parseFloat(String(m.amount || 0))),
+            0,
+        );
+        const orderAmount = typeof (order as any).amount === "number" ? (order as any).amount : 0;
+        if (existingTotal + amount > orderAmount) {
+            throw apiValidationException("milestone_total_exceeds_order_amount", null, null, languageCode);
+        }
+
+        SchemaGuard.checkModelPermission(OrderMilestone, "create", actionUserCtx, languageCode);
+
+        await orderMilestoneService.create(
+            {
+                order: new ObjectId(orderId),
+                company: company._id,
+                name: name.trim(),
+                amount,
+                currency: new ObjectId(currencyId),
+                status: "pending",
+                orderIndex: orderIndex ?? 0,
+            } as any,
+            {session, logger, languageCode, auditUserId: actionUserCtx.userId},
+        );
+
+        logger.finish(`Successfully created milestone for order: ${orderId}`);
+
+        return {message: "Milestone created successfully"};
+    }
+
+    @action({
+        auth: "private",
+        rateLimit: {windowMs: 60000, max: 20},
+        transaction: true,
+        schema: releaseOrderMilestoneFormSchema,
+    })
+    async releaseMilestone(params: Record<string, any>): Promise<ActionMessage> {
+        const {logger, languageCode, session, company, actionUserCtx, milestoneId} = params;
+
+        logger.start(`Releasing milestone: ${milestoneId}...`);
+
+        const milestone = await orderMilestoneService.findById(
+            new ObjectId(milestoneId),
+            {session, logger, languageCode},
+            "order currency",
+            "_id order name amount currency status orderIndex company",
+        );
+
+        if (!milestone) {
+            throw apiValidationException("milestone_not_found", null, null, languageCode);
+        }
+
+        const milestoneCompanyId =
+            (milestone as any).company?._id?.toString?.() ?? (milestone as any).company?.toString?.();
+        if (milestoneCompanyId !== company._id.toString()) {
+            throw apiValidationException("milestone_not_found", null, null, languageCode);
+        }
+
+        if ((milestone as any).status !== "pending") {
+            throw apiValidationException("milestone_already_released", null, null, languageCode);
+        }
+
+        const orderId = (milestone as any).order?._id || (milestone as any).order;
+        const order = await orderService.findOneOrThrow(
+            {_id: orderId, company: company._id},
+            {session, logger, languageCode},
+        );
+
+        const customerId = (order as any).customer?._id?.toString?.() || (order as any).customer?.toString?.();
+        if (customerId !== actionUserCtx.userId?.toString?.()) {
+            throw apiValidationException("only_customer_can_release_milestone", null, null, languageCode);
+        }
+
+        if ((order as any).status !== "in_progress") {
+            throw apiValidationException("order_must_be_in_progress_to_release", null, null, languageCode);
+        }
+
+        const milestoneAmount = typeof (milestone as any).amount === "number"
+            ? (milestone as any).amount
+            : parseFloat(String((milestone as any).amount || 0));
+        const currencyId = (milestone as any).currency?._id || (milestone as any).currency;
+        const releaseProviderId = (order as any).provider?._id || (order as any).provider;
+
+        await orderMilestoneService.updateByIdOrThrow(
+            new ObjectId(milestoneId),
+            {$set: {status: "released"}},
+            {session, logger, languageCode, auditUserId: actionUserCtx.userId},
+        );
+
+        if (milestoneAmount > 0 && currencyId) {
+            const providerStripeAccountId = releaseProviderId
+                ? await providerProfileService.getPayoutAccountId(releaseProviderId, company._id, {
+                    session,
+                    logger,
+                    languageCode,
+                })
+                : undefined;
+            await createEscrowReleaseAndFee(
+                orderId,
+                milestoneAmount,
+                currencyId,
+                company._id,
+                {session, logger, languageCode, auditUserId: actionUserCtx.userId},
+                {providerStripeAccountId},
+            );
+        }
+
+        const pendingMilestones = await orderMilestoneService.count(
+            {order: orderId, company: company._id, status: "pending"},
+            {session, logger, languageCode},
+        );
+
+        if (pendingMilestones === 0) {
+            await orderService.updateByIdOrThrow(
+                orderId,
+                {$set: {status: "completed"}},
+                {session, logger, languageCode, auditUserId: actionUserCtx.userId},
+            );
+        }
+
+        logger.finish(`Successfully released milestone: ${milestoneId}`);
+
+        return {message: "Milestone released successfully"};
     }
 }

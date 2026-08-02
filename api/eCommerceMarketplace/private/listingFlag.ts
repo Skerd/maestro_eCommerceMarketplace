@@ -4,6 +4,7 @@ import {apiValidationException} from "armonia/src/modules/core/helpers/exception
 import {listingFlagService} from "@eCommerceMarketplaceModule/database/schemas/listingFlag/listingFlag.service";
 import {listingService} from "@eCommerceMarketplaceModule/database/schemas/listing/listing.service";
 import ListingFlag from "@eCommerceMarketplaceModule/database/schemas/listingFlag/listingFlag";
+import {ListingFlagActions} from "@eCommerceMarketplaceModule/database/schemas/listingFlag/listingFlag.actions";
 import {listingFlagListFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listingFlag/listingFlagList.form.validator";
 import {createListingFlagFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listingFlag/createListingFlag.form.validator";
 import {updateListingFlagFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listingFlag/updateListingFlag.form.validator";
@@ -25,24 +26,14 @@ export const {router} = createCrudRouter({
     toDTO: listingFlagToDTO,
     toDTOArray: listingFlagsToDTO,
     toSelect: listingFlagsToSelect,
-    extraListFilter: async ({id, listingId, status, actionUserCtx}) => {
-        const filter: Record<string, unknown> = {};
-
-        if (id) {
-            filter._id = new ObjectId(id);
+    actions: ListingFlagActions,
+    extraListFilter: async ({actionUserCtx}) => {
+        if (actionUserCtx.isAdmin) {
+            return {};
         }
-        if (listingId) {
-            filter.listing = new ObjectId(listingId);
-        }
-        if (status) {
-            filter.status = status;
-        }
-        if (!actionUserCtx.isAdmin) {
-            filter.user = actionUserCtx.userId;
-        }
-
-        return filter;
+        return {user: actionUserCtx.userId};
     },
+    /** Domain-guard create (like productReview): listing existence/duplicate checks; user derived. status default on schema. */
     buildCreateData: async ({listingId, reason, comment, actionUserCtx, company, session, logger, languageCode}) => {
         const listing = await listingService.findById(
             new ObjectId(listingId),
@@ -68,52 +59,32 @@ export const {router} = createCrudRouter({
             user: actionUserCtx.userId,
             reason,
             comment: comment?.trim() || undefined,
-            status: "pending" as const,
         };
     },
-    buildUpdateData: async ({status, resolution, actionUserCtx, languageCode}, writeFields) => {
-        if (!actionUserCtx.isAdmin) {
+    /** Edit report content only; status changes go through resolve/dismiss actions. */
+    buildUpdateData: async ({reason, comment, actionUserCtx, languageCode, session, logger, company, _id}, writeFields) => {
+        const flag = await listingFlagService.findOneOrThrow(
+            {_id: new ObjectId(_id), company: company._id},
+            {session, logger, languageCode},
+        );
+
+        const reporterId = (flag as any).user?._id?.toString?.() ?? (flag as any).user?.toString?.();
+        const isOwner = reporterId === actionUserCtx.userId?.toString?.();
+        if (!actionUserCtx.isAdmin && !isOwner) {
             throw apiValidationException("admin_only", null, null, languageCode);
         }
 
+        if (flag.status !== "pending") {
+            throw apiValidationException("listing_flag_cannot_edit_in_current_status", null, null, languageCode);
+        }
+
         const update: Record<string, unknown> = {};
-
-        if (status !== undefined && writeFields.status) {
-            update.status = status;
+        if (reason !== undefined && writeFields.reason) {
+            update.reason = reason;
         }
-        if (resolution !== undefined && writeFields.resolution) {
-            update.resolution = resolution?.trim() ? resolution.trim() : null;
+        if (comment !== undefined && writeFields.comment) {
+            update.comment = typeof comment === "string" && comment.trim() ? comment.trim() : null;
         }
-
         return update;
-    },
-    afterUpdate: async (params, existing) => {
-        const {status, listingAction, session, logger, languageCode, actionUserCtx, company} = params;
-
-        if (status !== "reviewed" || listingAction !== "deactivate") {
-            return;
-        }
-
-        const listingId = (existing as any).listing?._id ?? (existing as any).listing;
-        if (!listingId) {
-            return;
-        }
-
-        const listing = await listingService.findById(
-            new ObjectId(listingId),
-            {session, logger, languageCode},
-            "",
-            "_id company",
-        );
-        const listingCompanyId = (listing as any)?.company?._id ?? (listing as any)?.company;
-        if (!listing || listingCompanyId?.toString?.() !== company._id.toString()) {
-            return;
-        }
-
-        await listingService.updateById(
-            new ObjectId(listingId),
-            {$set: {status: "inactive"}},
-            {session, logger, languageCode, auditUserId: actionUserCtx.userId, returnNew: true},
-        );
     },
 });

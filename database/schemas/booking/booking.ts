@@ -6,7 +6,8 @@ import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
 import softDeletePlugin from "@coreModule/database/plugins/softDeletePlugin";
-import { IOwnershipPluginFields, ISoftDeletePluginFields } from "@coreModule/database/types/plugin-fields";
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
+import {IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields} from "@coreModule/database/types/plugin-fields";
 import { addModelData } from "@coreModule/database/collections";
 import { CompanyBlankSnippet } from "@coreModule/database/schemas/company/company.snippets";
 import { SimpleUserSnippet } from "@coreModule/database/schemas/user/user.snippets";
@@ -16,10 +17,9 @@ import { BookingSchemaDef } from "armonia/src/modules/eCommerceMarketplace/api/e
 import { applyBookingIndexes } from "./booking.indexes";
 import { bookingViews } from "./booking.views";
 
-export interface IBooking extends Document, IOwnershipPluginFields, ISoftDeletePluginFields {
+export interface IBooking extends Document, IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields {
     order: IOrder;
     provider: IUser;
-    company: ICompany;
     startAt: Date;
     endAt: Date;
     timezone: string;
@@ -38,12 +38,6 @@ const BookingSchema = new Schema<IBooking>(
             ref: "User",
             required: true,
             refAllowlist: SimpleUserSnippet,
-        },
-        company: {
-            type: SchemaTypes.ObjectId,
-            ref: "Company",
-            required: true,
-            refAllowlist: CompanyBlankSnippet,
         },
         startAt: {
             type: SchemaTypes.Date,
@@ -68,10 +62,11 @@ const BookingSchema = new Schema<IBooking>(
 ownershipPlugin(BookingSchema);
 auditPlugin(BookingSchema);
 softDeletePlugin(BookingSchema);
+lifeCyclePlugin(BookingSchema);
 applyBookingIndexes(BookingSchema);
 const Booking = model<IBooking>("Booking", BookingSchema);
 normalizeSchemaPermissions(Booking);
 export default Booking;
 
 addModelData(Booking, bookingViews);
-validateSchemaDefAgainstMongoose(BookingSchema, BookingSchemaDef, "Booking", ["startAt", "endAt"]);
+validateSchemaDefAgainstMongoose(BookingSchema, BookingSchemaDef, "Booking");

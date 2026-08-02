@@ -8,8 +8,8 @@ import Dispute from "@eCommerceMarketplaceModule/database/schemas/dispute/disput
 import {DisputeActions} from "@eCommerceMarketplaceModule/database/schemas/dispute/dispute.actions";
 import {disputeService} from "@eCommerceMarketplaceModule/database/schemas/dispute/dispute.service";
 import {orderService} from "@eCommerceMarketplaceModule/database/schemas/order/order.service";
-import {disputeToDTO, disputesToDTO} from "@eCommerceMarketplaceModule/utilities/mappers/disputes/disputeMapper.dto";
-import {disputesToSelect} from "@eCommerceMarketplaceModule/utilities/mappers/disputes/disputeMapper.select";
+import {disputeToDTO, disputesToDTO} from "@eCommerceMarketplaceModule/utilities/mappers/dispute/disputeMapper.dto";
+import {disputesToSelect} from "@eCommerceMarketplaceModule/utilities/mappers/dispute/disputeMapper.select";
 
 async function assertOrderPartyAccess(orderId: string, params: Record<string, any>): Promise<void> {
     const {logger, languageCode, actionUserCtx, company} = params;
@@ -69,23 +69,11 @@ export const {router} = createCrudRouter({
     toDTO: disputeToDTO,
     toDTOArray: disputesToDTO,
     toSelect: disputesToSelect,
-    extraListFilter: async ({orderId, status, actionUserCtx, company, logger, languageCode, ...params}) => {
-        const filter: Record<string, unknown> = {};
-
-        if (orderId) {
-            filter.order = new ObjectId(orderId);
+    extraListFilter: async ({actionUserCtx, company, logger, languageCode}) => {
+        if (actionUserCtx.isAdmin) {
+            return {};
         }
-        if (status && typeof status === "string" && status.trim()) {
-            filter.status = status.trim();
-        }
-
-        if (!actionUserCtx.isAdmin && orderId) {
-            await assertOrderPartyAccess(orderId, {actionUserCtx, company, logger, languageCode, ...params});
-        } else if (!actionUserCtx.isAdmin) {
-            Object.assign(filter, await nonAdminOrderScope({actionUserCtx, company, logger, languageCode, ...params}));
-        }
-
-        return filter;
+        return nonAdminOrderScope({actionUserCtx, company, logger, languageCode});
     },
     enrichSingle: async (doc, params) => {
         const orderId =
@@ -95,6 +83,7 @@ export const {router} = createCrudRouter({
         }
         return disputeToDTO(doc);
     },
+    /** Domain-guard create (like productReview): order-party/uniqueness checks; initiator derived. status default on schema. */
     buildCreateData: async ({orderId, reason, actionUserCtx, company, session, logger, languageCode}) => {
         const order = await orderService.findOne(
             {_id: new ObjectId(orderId), company: company._id},
@@ -132,10 +121,9 @@ export const {router} = createCrudRouter({
             order: new ObjectId(orderId),
             initiator: actionUserCtx.userId,
             reason: reason.trim(),
-            status: "open" as const,
         };
     },
-    /** Status and resolution via `DisputeActions`; same pattern as promotions. */
+    /** Status and resolution via DisputeActions. */
     buildUpdateData: async () => ({}),
     actions: DisputeActions,
 });

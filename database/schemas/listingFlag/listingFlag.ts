@@ -5,20 +5,25 @@ import { ICompany } from "@coreModule/database/schemas/company/company";
 import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
-import { IOwnershipPluginFields } from "@coreModule/database/types/plugin-fields";
+import {
+    IOwnershipPluginFields,
+    ILifeCyclePluginFields,
+    ISoftDeletePluginFields
+} from "@coreModule/database/types/plugin-fields";
 import { addModelData } from "@coreModule/database/collections";
 import { validateSchemaDefAgainstMongoose } from "@coreModule/database/utilities/validateSchemaDefAgainstMongoose";
 import { ListingFlagSchemaDef } from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listingFlag/listingFlag.schema-def";
-import { CompanyBlankSnippet } from "@coreModule/database/schemas/company/company.snippets";
 import { SimpleUserSnippet } from "@coreModule/database/schemas/user/user.snippets";
 import { ListingSimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas/listing/listing.snippets";
 import { applyListingFlagIndexes } from "./listingFlag.indexes";
 import { listingFlagViews } from "./listingFlag.views";
 import softDeletePlugin from "@coreModule/database/plugins/softDeletePlugin";
 
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
+
 export type ListingFlagReason = "inappropriate" | "spam" | "misleading" | "other";
 
-export interface IListingFlag extends Document, IOwnershipPluginFields {
+export interface IListingFlag extends Document, IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields {
     listing: IListing;
     user: IUser;
     company: ICompany;
@@ -75,6 +80,7 @@ const ListingFlagSchema = new Schema<IListingFlag>(
 ownershipPlugin(ListingFlagSchema);
 softDeletePlugin(ListingFlagSchema);
 auditPlugin(ListingFlagSchema);
+lifeCyclePlugin(ListingFlagSchema);
 applyListingFlagIndexes(ListingFlagSchema);
 const ListingFlag = model<IListingFlag>("ListingFlag", ListingFlagSchema);
 normalizeSchemaPermissions(ListingFlag);

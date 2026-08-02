@@ -49,6 +49,20 @@ export const listingPackageSheetView: ViewConfig = {
                         },
                         {
                             render: "#SmallInfoCard",
+                            permissions: {read: "provider"},
+                            field: {
+                                name: "provider",
+                                widget: "#SmallInfoCard",
+                                label: "provider",
+                                widgetProps: {
+                                    icon: "#User",
+                                    valuePath: ["provider.name", "provider.surname"],
+                                    joinSeparator: " ",
+                                },
+                            },
+                        },
+                        {
+                            render: "#SmallInfoCard",
                             permissions: {read: "price"},
                             field: {
                                 name: "price.amount",
@@ -157,15 +171,6 @@ const listingPackageFormFields: ViewConfig["nodes"] = [
             {
                 render: "#Field",
                 field: {
-                    name: "description",
-                    widget: "#Textarea",
-                    label: "form.descriptionLabel",
-                    widgetProps: {className: "min-h-[80px]"},
-                },
-            },
-            {
-                render: "#Field",
-                field: {
                     name: "price.amount",
                     widget: "#Input",
                     label: "form.priceAmountLabel",
@@ -200,6 +205,21 @@ const listingPackageFormFields: ViewConfig["nodes"] = [
                     widget: "#Input",
                     label: "form.sortOrderLabel",
                     widgetProps: {type: "number", min: 0, step: 1},
+                },
+            },
+        ],
+    },
+    {
+        render: "#FormGrid",
+        props: {columns: 1},
+        children: [
+            {
+                render: "#Field",
+                field: {
+                    name: "description",
+                    widget: "#Textarea",
+                    label: "form.descriptionLabel",
+                    widgetProps: {className: "min-h-[80px] max-h-[200px] resize-none overflow-y-auto"},
                 },
             },
         ],

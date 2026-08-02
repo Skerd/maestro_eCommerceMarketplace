@@ -96,9 +96,9 @@ const bookingFormFields: ViewConfig["nodes"] = [
             {
                 render: "#Field",
                 field: {
-                    name: "orderId",
+                    name: "order",
                     widget: "#ApiSelect",
-                    label: "form.orderIdLabel",
+                    label: "form.orderLabel",
                     required: true,
                     widgetProps: {apiUrl: "/api/eCommerceMarketplace/order/select"},
                 },

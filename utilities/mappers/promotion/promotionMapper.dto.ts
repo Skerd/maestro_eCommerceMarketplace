@@ -1,8 +1,8 @@
 import {IPromotion} from "@eCommerceMarketplaceModule/database/schemas/promotion/promotion";
 import type {Promotion} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/promotion/promotion.dto";
-import {mapOwnershipToDTO, mapSoftDeleteToDTO} from "@coreModule/utilities/mappers/plugin/pluginMappers.dto";
+import {mapOwnershipToDTO, mapSoftDeleteToDTO, mapLifeCycleToDTO} from "@coreModule/utilities/mappers/plugin/pluginMappers.dto";
 
-export function promotionToDTO(promotion: IPromotion | any): Promotion {
+export function promotionToDTO(promotion: IPromotion): Promotion {
     return {
         _id: promotion._id.toString(),
         name: promotion.name,
@@ -19,6 +19,7 @@ export function promotionToDTO(promotion: IPromotion | any): Promotion {
         endAt: promotion.endAt,
         ...mapOwnershipToDTO(promotion),
         ...mapSoftDeleteToDTO(promotion),
+        ...mapLifeCycleToDTO(promotion),
     };
 }
 

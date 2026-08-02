@@ -10,57 +10,67 @@ Enable via `ENABLED_MODULES=eCommerceMarketplace`.
 
 ```
 eCommerceMarketplace/
-├── api/eCommerceMarketplace/private/   # Express routes
+├── api/eCommerceMarketplace/private/   # Express routes (auto-discovered)
 ├── database/
 │   ├── moduleBootstrap.ts
-│   └── schemas/<resource>/
+│   └── schemas/<resource>/            # models, services, actions, views
 ├── domain/
-│   └── notifications/                  # Marketplace notification handlers
-└── utilities/
-    └── mappers/                        # DTO mappers per resource
+│   └── notifications/                  # marketplaceNotificationHandlers + event codes
+├── utilities/
+│   ├── config.ts                       # Module-owned operational config
+│   ├── cron/registerHandlers.ts
+│   ├── cronJobs/
+│   └── mappers/<resource>/             # Singular resource folders
+└── websocket/
+    └── roomContribution.ts
 ```
+
+## Lifecycle mutations (canonical)
+
+All order lifecycle mutations live on **`OrderActions`** (`POST /api/eCommerceMarketplace/order/<action>`):
+
+| Action | Purpose |
+|--------|---------|
+| `createFromListing` | Create order from a listing |
+| `accept` / `start` / `cancel` / `extend` | Order status |
+| `submitDelivery` / `acceptDelivery` | Delivery + escrow release |
+| `requestRevision` | Revision request |
+| `createMilestone` / `releaseMilestone` | Milestone create + escrow release |
+
+`orderDelivery`, `orderRevision`, and `orderMilestone` HTTP routes are **list-only**. Escrow hold/release/refund is invoked from OrderActions (+ auto-complete cron) via **finance** `escrowHelper` (fee percent owned by finance).
 
 ## API routes
 
-| Route file | Description |
-|------------|-------------|
-| `listing.ts` | Marketplace listings |
-| `listingPackage.ts` | Listing packages |
-| `listingAddOn.ts` | Optional add-ons |
-| `listingFlag.ts` | Moderation flags |
-| `providerProfile.ts` | Provider/seller profiles |
-| `providerAvailability.ts` | Provider scheduling |
-| `taskRequest.ts` | Buyer task requests |
-| `bid.ts` | Provider bids |
-| `booking.ts` | Appointments / bookings |
-| `order.ts` | Marketplace orders |
-| `review.ts` | Reviews and ratings |
-| `dispute.ts` | Dispute resolution |
-| `promotion.ts` | Marketplace promotions |
+| Route file | Base path | Notes |
+|------------|-----------|-------|
+| `order.ts` | `/api/eCommerceMarketplace/order` | CRUD + OrderActions |
+| `orderDelivery.ts` | `/api/eCommerceMarketplace/orderDelivery` | List only |
+| `orderMilestone.ts` | `/api/eCommerceMarketplace/orderMilestone` | List only |
+| `orderRevision.ts` | `/api/eCommerceMarketplace/orderRevision` | List only |
+| `listing.ts` … `promotion.ts` | `/api/eCommerceMarketplace/<resource>` | CRUD resources |
 
-## Database models
+## Config
 
-Registered in `database/moduleBootstrap.ts`:
+[`utilities/config.ts`](utilities/config.ts) (`getECommerceMarketplaceConfig()`):
 
-- `Listing`, `TaskRequest`, `Bid`, `Order`, `Review`
-- `ListingPackage`, `ListingAddOn`, `ProviderProfile`, `ProviderAvailability`
-- `Booking`, `Dispute`, `Promotion`, `ListingFlag`
+| Key | Env | Default |
+|-----|-----|---------|
+| `autoAcceptDays` | `ECOMMERCE_MARKETPLACE_AUTO_ACCEPT_DAYS` | `3` |
+| `maxRevisions` | `ECOMMERCE_MARKETPLACE_MAX_REVISIONS` | `3` |
+| `stripeConnectReturnUrl` | `STRIPE_CONNECT_RETURN_URL` | derived from `CLIENT_SIDE.HOST` |
+| `stripeConnectRefreshUrl` | `STRIPE_CONNECT_REFRESH_URL` | derived from `CLIENT_SIDE.HOST` |
 
-Each schema folder uses the standard maestro layout (model, service, indexes, snippets, views).
+## Cron handlers
 
-## Path alias
-
-```ts
-import Listing from "@eCommerceMarketplaceModule/database/schemas/listing/listing";
-```
-
-## Relationship to eCommerce
-
-The marketplace module handles peer-to-peer / services flows (listings, bids, providers). Standard catalog commerce (products, cart, warehouse) remains in **eCommerce**. Both modules can be enabled together.
+| Code | Job |
+|------|-----|
+| `eCommerceMarketplace.orderAutoComplete` | Auto-complete stale submitted deliveries |
+| `eCommerceMarketplace.taskRequestExpiry` | Expire open task requests |
 
 ## Related packages
 
 | Package | Location |
 |---------|----------|
-| Armonia contracts | [`armonia/src/modules/eCommerceMarketplace`](../../../armonia/src/modules/eCommerceMarketplace/README.md) |
-| Client UI | `sinfonia/src/modules/eCommerceMarketplace/` |
+| Armonia contracts | `armonia/src/modules/eCommerceMarketplace` |
+| Client UI | `sinfonia/src/modules/eCommerceMarketplace` |
+| Escrow ledger | `maestro/modules/finance` |

@@ -8,7 +8,6 @@ import Review from "@eCommerceMarketplaceModule/database/schemas/review/review";
 import ListingPackage from "@eCommerceMarketplaceModule/database/schemas/listingPackage/listingPackage";
 import ListingAddOn from "@eCommerceMarketplaceModule/database/schemas/listingAddOn/listingAddOn";
 import ProviderProfile from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile";
-import ProviderAvailability from "@eCommerceMarketplaceModule/database/schemas/providerAvailability/providerAvailability";
 import Booking from "@eCommerceMarketplaceModule/database/schemas/booking/booking";
 import Dispute from "@eCommerceMarketplaceModule/database/schemas/dispute/dispute";
 import Promotion from "@eCommerceMarketplaceModule/database/schemas/promotion/promotion";
@@ -27,7 +26,6 @@ export const eCommerceMarketplaceModels: Model<any>[] = [
     ListingPackage,
     ListingAddOn,
     ProviderProfile,
-    ProviderAvailability,
     Booking,
     Dispute,
     Promotion,

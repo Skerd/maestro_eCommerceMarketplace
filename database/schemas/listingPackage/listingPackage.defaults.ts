@@ -1,6 +1,7 @@
 import type {HydratedDocument} from "mongoose";
 import {ObjectId} from "mongodb";
 import ListingPackage, {type IListingPackage} from "./listingPackage";
+import Listing from "@eCommerceMarketplaceModule/database/schemas/listing/listing";
 import {getLogger, serverLogger} from "@coreModule/loggers/serverLog";
 import {ICompany} from "@coreModule/database/schemas/company/company";
 import {IUser} from "@coreModule/database/schemas/user/user";
@@ -158,8 +159,10 @@ export async function createListingPackages(
                 name: seed.name,
             });
 
+            const listingProvider = (listing as any).provider?._id ?? (listing as any).provider ?? provider._id;
             const payload = {
                 listing: listing._id,
+                provider: listingProvider,
                 name: seed.name,
                 description: seed.description,
                 price: {
@@ -180,6 +183,11 @@ export async function createListingPackages(
                 await existing.save();
                 logger.debug(`Listing package '${seed.name}' (${seedTag}) already exists; updated fields`);
             }
+
+            await Listing.updateOne(
+                {_id: listing._id},
+                {$addToSet: {listingPackages: existing._id}},
+            );
 
             listingPackages.push(existing);
             bySeedKey[seed.seedKey] = existing;

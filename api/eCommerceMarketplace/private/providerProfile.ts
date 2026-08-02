@@ -1,6 +1,8 @@
 import {ObjectId} from "mongodb";
 import {createCrudRouter} from "@coreModule/api/crudRouterFactory";
+import {buildCreateDataFromSchemaDef, buildUpdateDataFromSchemaDef} from "@coreModule/api/buildUpdateDataFromSchemaDef";
 import {apiValidationException} from "armonia/src/modules/core/helpers/exceptions";
+import {ProviderProfileSchemaDef} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/providerProfile/providerProfile.schema-def";
 import {createProviderProfileFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/providerProfile/createProviderProfile.form.validator";
 import {editProviderProfileFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/providerProfile/editProviderProfile.form.validator";
 import {providerProfileListFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/providerProfile/providerProfileList.form.validator";
@@ -11,7 +13,15 @@ import {
     providerProfileToDTO,
     providerProfilesToDTOArray,
 } from "@eCommerceMarketplaceModule/utilities/mappers/providerProfile/providerProfileMapper.dto";
+import {providerProfilesToSelect} from "@eCommerceMarketplaceModule/utilities/mappers/providerProfile/providerProfileMapper.select";
 import {loadProviderProfileMetrics} from "@eCommerceMarketplaceModule/utilities/mappers/providerProfile/providerProfileMetrics";
+
+const buildCreate = buildCreateDataFromSchemaDef(ProviderProfileSchemaDef, {
+    bio: (v) => (typeof v === "string" ? v.trim() : ""),
+});
+const buildUpdate = buildUpdateDataFromSchemaDef(ProviderProfileSchemaDef, {
+    bio: (v) => (typeof v === "string" ? v.trim() : ""),
+});
 
 export const basePath = "/api/eCommerceMarketplace/providerProfile";
 export const {router} = createCrudRouter({
@@ -25,12 +35,7 @@ export const {router} = createCrudRouter({
     editSchema: editProviderProfileFormSchema,
     toDTO: (doc) => providerProfileToDTO(doc)!,
     toDTOArray: providerProfilesToDTOArray,
-    toSelect: (docs) =>
-        docs.map((doc) => {
-            const user = doc.user as any;
-            const label = [user?.name, user?.surname].filter(Boolean).join(" ") || user?.name || doc._id.toString();
-            return {value: doc._id.toString(), label};
-        }),
+    toSelect: providerProfilesToSelect,
     documentFilter: async ({company, actionUserCtx, languageCode}) => {
         const base: Record<string, unknown> = {company: company._id};
         if (actionUserCtx?.isAdmin) {
@@ -49,27 +54,20 @@ export const {router} = createCrudRouter({
         const userId = actionUserCtx?.userId;
         return userId ? {user: new ObjectId(userId)} : {};
     },
-    buildCreateData: async ({skills, bio, portfolio, actionUserCtx, languageCode}) => {
-        const userId = actionUserCtx?.userId;
+    buildCreateData: async (params) => {
+        const userId = params.actionUserCtx?.userId;
         if (!userId) {
-            throw apiValidationException("unauthorized", null, null, languageCode);
+            throw apiValidationException("unauthorized", null, null, params.languageCode);
         }
-        return {
-            user: new ObjectId(userId),
-            skills: skills ?? [],
-            bio: bio?.trim() || "",
-            portfolio: (portfolio ?? []).map((id: string) => new ObjectId(id)),
-        };
+        const data = buildCreate(params);
+        data.user = new ObjectId(userId);
+        if (data.skills === undefined) data.skills = [];
+        if (data.bio === undefined) data.bio = "";
+        if (data.portfolio === undefined) data.portfolio = [];
+        if (data.availability === undefined) data.availability = [];
+        return data;
     },
-    buildUpdateData: async ({skills, bio, portfolio}, writeFields) => {
-        const update: Record<string, unknown> = {};
-        if (skills !== undefined && writeFields.skills) update.skills = skills;
-        if (bio !== undefined && writeFields.bio) update.bio = bio?.trim() || "";
-        if (portfolio !== undefined && writeFields.portfolio) {
-            update.portfolio = portfolio.map((id: string) => new ObjectId(id));
-        }
-        return update;
-    },
+    buildUpdateData: buildUpdate,
     enrichSingle: async (doc, params) => {
         const metrics = await loadProviderProfileMetrics(doc.user?._id ?? doc.user, params.company._id, params);
         return providerProfileToDTO(doc, metrics)!;

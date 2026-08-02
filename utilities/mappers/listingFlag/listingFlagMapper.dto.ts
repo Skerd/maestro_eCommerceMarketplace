@@ -1,33 +1,23 @@
 import { IListingFlag } from "@eCommerceMarketplaceModule/database/schemas/listingFlag/listingFlag";
 import type { ListingFlag } from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listingFlag/listingFlag.dto";
+import {mapPopulatedSimpleUser} from "@coreModule/utilities/mappers/common.mapper";
+import {mapOwnershipToDTO, mapSoftDeleteToDTO, mapLifeCycleToDTO} from "@coreModule/utilities/mappers/plugin/pluginMappers.dto";
 
-export function listingFlagToDTO(f: IListingFlag | any): ListingFlag {
+export function listingFlagToDTO(f: IListingFlag): ListingFlag {
     return {
         _id: f._id.toString(),
-        listing: f.listing
-            ? {
-                  _id: typeof f.listing._id === "string" ? f.listing._id : f.listing._id?.toString?.() || "",
-                  title: f.listing.title,
-              }
-            : undefined,
-        user: f.user
-            ? {
-                  _id: typeof f.user._id === "string" ? f.user._id : f.user._id?.toString?.() || "",
-                  name: f.user.name,
-                  fullName: f.user.fullName,
-              }
-            : undefined,
-        company: f.company
-            ? {
-                  _id: typeof f.company._id === "string" ? f.company._id : f.company._id?.toString?.() || "",
-                  name: f.company.name,
-              }
-            : undefined,
+        listing: f.listing ? {
+            _id: typeof f.listing._id === "string" ? f.listing._id : f.listing._id?.toString?.() || "",
+            title: f.listing.title,
+        } : undefined,
+        user: mapPopulatedSimpleUser(f.user),
         reason: f.reason,
         comment: f.comment,
         status: f.status || "pending",
         resolution: f.resolution,
-        createdAt: f.createdAt,
+        ...mapOwnershipToDTO(f),
+        ...mapSoftDeleteToDTO(f),
+        ...mapLifeCycleToDTO(f),
     };
 }
 

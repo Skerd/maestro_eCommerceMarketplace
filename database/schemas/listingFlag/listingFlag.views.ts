@@ -7,7 +7,8 @@ export const listingFlagSheetView: ViewConfig = {
     apiUrl: "/api/eCommerceMarketplace/listingFlag",
     header: {
         titleField: "status",
-        subtitleKey: "eCommerce.listingFlag",
+        titleFieldLanguageCategory: "status_values",
+        subtitleKey: "listingFlagSubtitle",
         showCloseButton: true,
     },
     nodes: [
@@ -26,7 +27,15 @@ export const listingFlagSheetView: ViewConfig = {
                                 name: "listing",
                                 widget: "#SmallInfoCard",
                                 label: "listing",
-                                widgetProps: {icon: "#Package", valuePath: ["listing", "title"]},
+                                widgetProps: {
+                                    icon: "#LayoutList",
+                                    valuePath: ["listing.title"],
+                                    linkedRefPath: "listing",
+                                    linkedSheetModel: "listings",
+                                    linkedSheetWidget: "#ListingSheetView",
+                                    linkedSheetEntityProp: "listing",
+                                    linkedSheetValueField: "title",
+                                },
                             },
                         },
                         {
@@ -36,7 +45,7 @@ export const listingFlagSheetView: ViewConfig = {
                                 name: "reason",
                                 widget: "#SmallInfoCard",
                                 label: "reason",
-                                widgetProps: {icon: "#Flag"},
+                                widgetProps: {icon: "#Flag", languageKeyCategory: "reason_values"},
                             },
                         },
                         {
@@ -46,7 +55,12 @@ export const listingFlagSheetView: ViewConfig = {
                                 name: "user",
                                 widget: "#SmallInfoCard",
                                 label: "user",
-                                widgetProps: {icon: "#User", valuePath: ["user", "fullName"]},
+                                widgetProps: {
+                                    icon: "#User",
+                                    valuePath: ["user.name", "user.surname"],
+                                    joinSeparator: " ",
+                                    linkedRefPath: "user",
+                                },
                             },
                         },
                     ],
@@ -55,26 +69,47 @@ export const listingFlagSheetView: ViewConfig = {
         },
         {
             render: "#SheetGroup",
-            props: {title: "details"},
+            props: {title: "comment"},
+            dependent: "comment",
             children: [
                 {
-                    render: "#ExpandableText",
-                    permissions: {read: "comment"},
-                    field: {
-                        name: "comment",
-                        widget: "#ExpandableText",
-                        label: "comment",
-                    },
+                    render: "div",
+                    props: {className: "p-2 rounded-lg bg-muted/30 border border-border/50"},
+                    children: [
+                        {
+                            render: "#ExpandableText",
+                            permissions: {read: "comment"},
+                            field: {
+                                name: "comment",
+                                widget: "#ExpandableText",
+                                label: "comment",
+                                widgetProps: {className: "text-sm"},
+                            },
+                        },
+                    ],
                 },
+            ],
+        },
+        {
+            render: "#SheetGroup",
+            props: {title: "resolution"},
+            dependent: "resolution",
+            children: [
                 {
-                    render: "#ExpandableText",
-                    dependent: "resolution",
-                    permissions: {read: "resolution"},
-                    field: {
-                        name: "resolution",
-                        widget: "#ExpandableText",
-                        label: "resolution",
-                    },
+                    render: "div",
+                    props: {className: "p-2 rounded-lg bg-muted/30 border border-border/50"},
+                    children: [
+                        {
+                            render: "#ExpandableText",
+                            permissions: {read: "resolution"},
+                            field: {
+                                name: "resolution",
+                                widget: "#ExpandableText",
+                                label: "resolution",
+                                widgetProps: {className: "text-sm"},
+                            },
+                        },
+                    ],
                 },
             ],
         },
@@ -99,6 +134,7 @@ export const listingFlagCreateFormView: ViewConfig = {
                         name: "listingId",
                         widget: "#ApiSelect",
                         label: "form.listingIdLabel",
+                        placeholder: "form.listingIdPlaceholder",
                         required: true,
                         widgetProps: {apiUrl: "/api/eCommerceMarketplace/listing/select"},
                     },
@@ -109,13 +145,14 @@ export const listingFlagCreateFormView: ViewConfig = {
                         name: "reason",
                         widget: "#SimpleSelect",
                         label: "form.reasonLabel",
+                        placeholder: "form.reasonPlaceholder",
                         required: true,
                         widgetProps: {
                             options: [
-                                {value: "inappropriate", label: "inappropriate"},
-                                {value: "spam", label: "spam"},
-                                {value: "misleading", label: "misleading"},
-                                {value: "other", label: "other"},
+                                {value: "inappropriate", label: "form.reason_values.inappropriate"},
+                                {value: "spam", label: "form.reason_values.spam"},
+                                {value: "misleading", label: "form.reason_values.misleading"},
+                                {value: "other", label: "form.reason_values.other"},
                             ],
                         },
                     },
@@ -126,7 +163,8 @@ export const listingFlagCreateFormView: ViewConfig = {
                         name: "comment",
                         widget: "#Textarea",
                         label: "form.commentLabel",
-                        widgetProps: {className: "min-h-[100px]"},
+                        placeholder: "form.commentPlaceholder",
+                        widgetProps: {className: "min-h-[100px] max-h-[200px] resize-none overflow-y-auto"},
                     },
                 },
             ],
@@ -151,7 +189,6 @@ export const listingFlagEditFormView: ViewConfig = {
                     field: {
                         name: "_id",
                         widget: "#Input",
-                        label: "form.idLabel",
                         required: true,
                         widgetProps: {type: "hidden"},
                     },
@@ -159,15 +196,17 @@ export const listingFlagEditFormView: ViewConfig = {
                 {
                     render: "#Field",
                     field: {
-                        name: "status",
+                        name: "reason",
                         widget: "#SimpleSelect",
-                        label: "form.statusLabel",
+                        label: "form.reasonLabel",
+                        placeholder: "form.reasonPlaceholder",
                         required: true,
                         widgetProps: {
                             options: [
-                                {value: "pending", label: "pending"},
-                                {value: "reviewed", label: "reviewed"},
-                                {value: "dismissed", label: "dismissed"},
+                                {value: "inappropriate", label: "form.reason_values.inappropriate"},
+                                {value: "spam", label: "form.reason_values.spam"},
+                                {value: "misleading", label: "form.reason_values.misleading"},
+                                {value: "other", label: "form.reason_values.other"},
                             ],
                         },
                     },
@@ -175,24 +214,11 @@ export const listingFlagEditFormView: ViewConfig = {
                 {
                     render: "#Field",
                     field: {
-                        name: "resolution",
+                        name: "comment",
                         widget: "#Textarea",
-                        label: "form.resolutionLabel",
-                        widgetProps: {className: "min-h-[100px]"},
-                    },
-                },
-                {
-                    render: "#Field",
-                    field: {
-                        name: "listingAction",
-                        widget: "#SimpleSelect",
-                        label: "form.listingActionLabel",
-                        widgetProps: {
-                            options: [
-                                {value: "none", label: "none"},
-                                {value: "deactivate", label: "deactivate"},
-                            ],
-                        },
+                        label: "form.commentLabel",
+                        placeholder: "form.commentPlaceholder",
+                        widgetProps: {className: "min-h-[100px] max-h-[200px] resize-none overflow-y-auto"},
                     },
                 },
             ],

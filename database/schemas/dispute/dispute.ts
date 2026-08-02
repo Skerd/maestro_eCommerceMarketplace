@@ -5,7 +5,7 @@ import { ICompany } from "@coreModule/database/schemas/company/company";
 import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
-import {IOwnershipPluginFields, ISoftDeletePluginFields} from "@coreModule/database/types/plugin-fields";
+import {IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields} from "@coreModule/database/types/plugin-fields";
 import { addModelData } from "@coreModule/database/collections";
 import { CompanyBlankSnippet } from "@coreModule/database/schemas/company/company.snippets";
 import { SimpleUserSnippet } from "@coreModule/database/schemas/user/user.snippets";
@@ -19,9 +19,11 @@ import { applyDisputeIndexes } from "./dispute.indexes";
 import { disputeViews } from "./dispute.views";
 import softDeletePlugin from "@coreModule/database/plugins/softDeletePlugin";
 
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
+
 export type DisputeStatus = "open" | "under_review" | "resolved" | "closed";
 
-export interface IDispute extends Document, IOwnershipPluginFields, ISoftDeletePluginFields {
+export interface IDispute extends Document, IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields {
     order: IOrder;
     initiator: IUser;
     company: ICompany;
@@ -67,6 +69,7 @@ const DisputeSchema = new Schema<IDispute>(
 ownershipPlugin(DisputeSchema);
 auditPlugin(DisputeSchema);
 softDeletePlugin(DisputeSchema);
+lifeCyclePlugin(DisputeSchema);
 applyDisputeIndexes(DisputeSchema);
 const Dispute = model<IDispute>("Dispute", DisputeSchema);
 normalizeSchemaPermissions(Dispute);

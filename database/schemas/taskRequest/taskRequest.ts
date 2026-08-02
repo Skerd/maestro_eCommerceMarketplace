@@ -7,8 +7,9 @@ import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
 import softDeletePlugin from "@coreModule/database/plugins/softDeletePlugin";
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
 import { COLUMN_TYPE } from "armonia/src/modules/core/database/filter/typeOperators";
-import { IOwnershipPluginFields, ISoftDeletePluginFields } from "@coreModule/database/types/plugin-fields";
+import {IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields} from "@coreModule/database/types/plugin-fields";
 import { addModelData } from "@coreModule/database/collections";
 import { CurrencySimpleSnippet } from "@coreModule/database/schemas/currency/currency.snippets";
 import { SimpleUserSnippet } from "@coreModule/database/schemas/user/user.snippets";
@@ -29,7 +30,7 @@ import crypto from "crypto";
 
 export type TaskRequestStatus = "open" | "closed" | "awarded";
 
-export interface ITaskRequest extends Document, IOwnershipPluginFields, ISoftDeletePluginFields {
+export interface ITaskRequest extends Document, IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields {
     requester: IUser;
     name: string;
     title: string;
@@ -284,6 +285,7 @@ TaskRequestSchema.pre("save", function (next) {
 ownershipPlugin(TaskRequestSchema);
 auditPlugin(TaskRequestSchema);
 softDeletePlugin(TaskRequestSchema);
+lifeCyclePlugin(TaskRequestSchema);
 applyTaskRequestIndexes(TaskRequestSchema);
 const TaskRequest = model<ITaskRequest>("TaskRequest", TaskRequestSchema);
 normalizeSchemaPermissions(TaskRequest);

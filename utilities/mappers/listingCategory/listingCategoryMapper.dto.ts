@@ -1,20 +1,21 @@
 import type {IListingCategory} from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory";
 import type {ListingCategory} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listingCategory/listingCategory.dto";
-import {mapOwnershipToDTO, mapSoftDeleteToDTO} from "@coreModule/utilities/mappers/plugin/pluginMappers.dto";
+import {mapOwnershipToDTO, mapSoftDeleteToDTO, mapLifeCycleToDTO} from "@coreModule/utilities/mappers/plugin/pluginMappers.dto";
 
-export function listingCategoryToDTO(cat: IListingCategory | any): ListingCategory {
+export function listingCategoryToDTO(cat: IListingCategory): ListingCategory {
     return {
         _id: cat._id.toString(),
         name: cat.name,
         slug: cat.slug,
-        parent: cat.parent ? {
-            _id: cat.parent._id.toString(),
-            name: cat.parent.name,
-            slug: cat.parent.slug,
+        parentListingCategory: cat.parentListingCategory ? {
+            _id: cat.parentListingCategory._id.toString(),
+            name: cat.parentListingCategory.name,
+            slug: cat.parentListingCategory.slug,
         } : undefined,
         order: cat.order,
         ...mapSoftDeleteToDTO(cat),
         ...mapOwnershipToDTO(cat),
+        ...mapLifeCycleToDTO(cat),
     };
 }
 

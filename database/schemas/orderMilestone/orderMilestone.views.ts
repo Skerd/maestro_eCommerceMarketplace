@@ -7,7 +7,7 @@ export const orderMilestoneSheetView: ViewConfig = {
     apiUrl: "/api/eCommerceMarketplace/orderMilestone",
     header: {
         titleField: "name",
-        subtitleKey: "eCommerce.orderMilestone",
+        subtitleKey: "orderMilestoneSubtitle",
         showCloseButton: true,
     },
     nodes: [
@@ -81,8 +81,8 @@ export const orderMilestoneCreateFormView: ViewConfig = {
     viewType: "form",
     viewMode: "create",
     accessModel: "ordermilestones",
-    apiUrl: "/api/eCommerceMarketplace/orderMilestone",
-    method: "PUT",
+    apiUrl: "/api/eCommerceMarketplace/order/createMilestone",
+    method: "POST",
     nodes: [
         {
             render: "#FormGrid",

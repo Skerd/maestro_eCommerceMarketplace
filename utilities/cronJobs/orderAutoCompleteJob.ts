@@ -1,55 +1,51 @@
 /**
  * Hourly job: auto-complete orders that have a submitted delivery and are past
- * the 3-day acceptance window without customer action.
+ * the acceptance window without customer action.
  */
 
-import { CronJob } from "cron";
-import { CONSTANTS } from "@coreModule/environment";
-import { getLogger, serverLogger } from "@coreModule/loggers/serverLog";
-import { orderService } from "@eCommerceMarketplaceModule/database/schemas/order/order.service";
-import { orderDeliveryService } from "@eCommerceMarketplaceModule/database/schemas/orderDelivery/orderDelivery.service";
-import { disputeService } from "@eCommerceMarketplaceModule/database/schemas/dispute/dispute.service";
-import { createEscrowReleaseAndFee } from "@financeModule/utilities/escrowHelper";
-import { providerProfileService } from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile.service";
-
-const AUTO_ACCEPT_DAYS = 3;
-
-let autoCompleteJob: CronJob | null = null;
+import {CONSTANTS} from "@coreModule/environment";
+import {getLogger, serverLogger} from "@coreModule/loggers/serverLog";
+import {orderService} from "@eCommerceMarketplaceModule/database/schemas/order/order.service";
+import {orderDeliveryService} from "@eCommerceMarketplaceModule/database/schemas/orderDelivery/orderDelivery.service";
+import {disputeService} from "@eCommerceMarketplaceModule/database/schemas/dispute/dispute.service";
+import {completeSubmittedDeliveryAndRelease} from "@eCommerceMarketplaceModule/database/schemas/order/orderDeliveryCompletion";
+import {getECommerceMarketplaceConfig} from "@eCommerceMarketplaceModule/utilities/config";
 
 export async function runOrderAutoComplete(parentLogger?: serverLogger): Promise<void> {
     const logger = getLogger("order_auto_complete", parentLogger);
     const lang = CONSTANTS.DEFAULT_LANGUAGE ?? "en-US";
+    const {autoAcceptDays} = getECommerceMarketplaceConfig();
 
     logger.start("Running order auto-complete job...");
 
     const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - AUTO_ACCEPT_DAYS);
+    cutoff.setDate(cutoff.getDate() - autoAcceptDays);
 
     try {
-        // Find in_progress orders whose due date has passed
         const overdueOrders = await orderService.find(
-            { status: "in_progress", deliveryDueDate: { $lte: cutoff } },
-            { logger, languageCode: lang },
+            {status: "in_progress", deliveryDueDate: {$lte: cutoff}},
+            {logger, languageCode: lang},
             null,
-            "_id amount currency company provider",
-            { deliveryDueDate: 1 },
+            "_id amount currency company provider name status",
+            {deliveryDueDate: 1},
             200,
-            0
+            0,
         );
 
         for (const order of overdueOrders) {
             try {
-                // Check if there is a submitted delivery pending acceptance
+                const companyId = (order as any).company?._id ?? (order as any).company;
                 const submittedDelivery = await orderDeliveryService.findOne(
-                    { order: order._id, status: "submitted" },
-                    { logger, languageCode: lang }
+                    {order: order._id, status: "submitted", company: companyId},
+                    {logger, languageCode: lang},
+                    null,
+                    "_id status",
                 );
 
                 if (!submittedDelivery) continue;
 
-                // Skip orders with an active dispute — admin must resolve first
                 const openDispute = await disputeService.findOne(
-                    {order: order._id, status: {$in: ["open", "under_review"]}},
+                    {order: order._id, status: {$in: ["open", "under_review"]}, company: companyId},
                     {logger, languageCode: lang},
                     null,
                     "_id",
@@ -59,33 +55,11 @@ export async function runOrderAutoComplete(parentLogger?: serverLogger): Promise
                     continue;
                 }
 
-                await orderDeliveryService.updateById(
-                    submittedDelivery._id,
-                    { $set: { status: "accepted" } },
-                    { logger, languageCode: lang }
-                );
-
-                const amount = typeof (order as any).amount === "number"
-                    ? (order as any).amount
-                    : parseFloat(String((order as any).amount || 0));
-                const currencyId = (order as any).currency;
-                const companyId = (order as any).company;
-                const providerId = (order as any).provider?._id ?? (order as any).provider;
-
-                const providerStripeAccountId = providerId && companyId
-                    ? await providerProfileService.getPayoutAccountId(providerId, companyId, {logger, languageCode: lang})
-                    : undefined;
-
-                await createEscrowReleaseAndFee(order._id, amount, currencyId, companyId, {
+                await completeSubmittedDeliveryAndRelease(order, submittedDelivery, {
                     logger,
                     languageCode: lang,
-                }, {providerStripeAccountId});
-
-                await orderService.updateById(
-                    order._id,
-                    { $set: { status: "completed" } },
-                    { logger, languageCode: lang }
-                );
+                    notifyProvider: true,
+                });
 
                 logger.debug(`Auto-completed order ${order._id.toString()}`);
             } catch (e: unknown) {
@@ -99,24 +73,4 @@ export async function runOrderAutoComplete(parentLogger?: serverLogger): Promise
     }
 
     logger.finish("Finished order auto-complete job.");
-}
-
-export function startOrderAutoCompleteJob(parentLogger?: serverLogger): void {
-    const log = getLogger("order_auto_complete_cron", parentLogger);
-    if (autoCompleteJob !== null) return;
-    autoCompleteJob = new CronJob(
-        "0 0 * * * *",
-        () => { void runOrderAutoComplete(parentLogger); },
-        null,
-        true,
-        "UTC"
-    );
-    log.debug("Order auto-complete job scheduled (cron: 0 0 * * * * UTC — hourly)");
-}
-
-export function stopOrderAutoCompleteJob(): void {
-    if (autoCompleteJob) {
-        autoCompleteJob.stop();
-        autoCompleteJob = null;
-    }
 }

@@ -2,12 +2,9 @@
  * Hourly job: close open TaskRequests whose expiresAt has passed.
  */
 
-import { CronJob } from "cron";
 import { CONSTANTS } from "@coreModule/environment";
 import { getLogger, serverLogger } from "@coreModule/loggers/serverLog";
 import { taskRequestService } from "@eCommerceMarketplaceModule/database/schemas/taskRequest/taskRequest.service";
-
-let expiryJob: CronJob | null = null;
 
 export async function runTaskRequestExpiry(parentLogger?: serverLogger): Promise<void> {
     const logger = getLogger("task_request_expiry", parentLogger);
@@ -47,24 +44,4 @@ export async function runTaskRequestExpiry(parentLogger?: serverLogger): Promise
     }
 
     logger.finish("Finished task request expiry job.");
-}
-
-export function startTaskRequestExpiryJob(parentLogger?: serverLogger): void {
-    const log = getLogger("task_request_expiry_cron", parentLogger);
-    if (expiryJob !== null) return;
-    expiryJob = new CronJob(
-        "0 0 * * * *",
-        () => { void runTaskRequestExpiry(parentLogger); },
-        null,
-        true,
-        "UTC"
-    );
-    log.debug("Task request expiry job scheduled (cron: 0 0 * * * * UTC — hourly)");
-}
-
-export function stopTaskRequestExpiryJob(): void {
-    if (expiryJob) {
-        expiryJob.stop();
-        expiryJob = null;
-    }
 }

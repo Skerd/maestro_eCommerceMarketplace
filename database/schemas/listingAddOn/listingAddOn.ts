@@ -1,22 +1,26 @@
 import { Document, model, Schema, SchemaTypes } from "mongoose";
 import { IListing } from "@eCommerceMarketplaceModule/database/schemas/listing/listing";
 import { ICurrency } from "@coreModule/database/schemas/currency/currency";
+import { IUser } from "@coreModule/database/schemas/user/user";
 import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
-import { IOwnershipPluginFields } from "@coreModule/database/types/plugin-fields";
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
+import {IOwnershipPluginFields, ILifeCyclePluginFields} from "@coreModule/database/types/plugin-fields";
 import { ICompany } from "@coreModule/database/schemas/company/company";
 import { addModelData } from "@coreModule/database/collections";
 import { validateSchemaDefAgainstMongoose } from "@coreModule/database/utilities/validateSchemaDefAgainstMongoose";
 import { ListingAddOnSchemaDef } from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listingAddOn/listingAddOn.schema-def";
 import { CurrencySimpleSnippet } from "@coreModule/database/schemas/currency/currency.snippets";
+import { SimpleUserSnippet } from "@coreModule/database/schemas/user/user.snippets";
 import { ListingSimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas/listing/listing.snippets";
 import { applyListingAddOnIndexes } from "./listingAddOn.indexes";
 import { listingAddOnViews } from "./listingAddOn.views";
 
-export interface IListingAddOn extends Document, IOwnershipPluginFields {
+export interface IListingAddOn extends Document, IOwnershipPluginFields, ILifeCyclePluginFields {
     company: ICompany;
     listing: IListing;
+    provider: IUser;
     name: string;
     price: {
         amount: number;
@@ -32,6 +36,16 @@ const ListingAddOnSchema = new Schema<IListingAddOn>(
             ref: "Listing",
             required: true,
             refAllowlist: ListingSimpleSnippet,
+        },
+        provider: {
+            type: SchemaTypes.ObjectId,
+            ref: "User",
+            required: true,
+            refAllowlist: SimpleUserSnippet,
+            permissions: {
+                self: {write: "no-permission"},
+                others: {write: "no-permission"},
+            },
         },
         name: {
             type: SchemaTypes.String,
@@ -64,10 +78,11 @@ const ListingAddOnSchema = new Schema<IListingAddOn>(
 
 ownershipPlugin(ListingAddOnSchema);
 auditPlugin(ListingAddOnSchema);
+lifeCyclePlugin(ListingAddOnSchema);
 applyListingAddOnIndexes(ListingAddOnSchema);
 const ListingAddOn = model<IListingAddOn>("ListingAddOn", ListingAddOnSchema);
 normalizeSchemaPermissions(ListingAddOn);
 export default ListingAddOn;
 
 addModelData(ListingAddOn, listingAddOnViews);
-validateSchemaDefAgainstMongoose(ListingAddOnSchema, ListingAddOnSchemaDef, "ListingAddOn");
+validateSchemaDefAgainstMongoose(ListingAddOnSchema, ListingAddOnSchemaDef, "ListingAddOn", ["provider"]);

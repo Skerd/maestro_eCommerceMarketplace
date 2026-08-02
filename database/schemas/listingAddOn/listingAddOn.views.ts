@@ -49,6 +49,20 @@ export const listingAddOnSheetView: ViewConfig = {
                         },
                         {
                             render: "#SmallInfoCard",
+                            permissions: {read: "provider"},
+                            field: {
+                                name: "provider",
+                                widget: "#SmallInfoCard",
+                                label: "provider",
+                                widgetProps: {
+                                    icon: "#User",
+                                    valuePath: ["provider.name", "provider.surname"],
+                                    joinSeparator: " ",
+                                },
+                            },
+                        },
+                        {
+                            render: "#SmallInfoCard",
                             permissions: {read: "price"},
                             field: {
                                 name: "price.amount",

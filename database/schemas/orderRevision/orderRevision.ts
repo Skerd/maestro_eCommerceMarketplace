@@ -10,14 +10,17 @@ import { OrderDeliverySimpleSnippet } from "@eCommerceMarketplaceModule/database
 import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
 import { CompanyBlankSnippet } from "@coreModule/database/schemas/company/company.snippets";
-import { IOwnershipPluginFields } from "@coreModule/database/types/plugin-fields";
+import {IOwnershipPluginFields, ILifeCyclePluginFields} from "@coreModule/database/types/plugin-fields";
 import { applyOrderRevisionIndexes } from "./orderRevision.indexes";
 import { orderRevisionViews } from "./orderRevision.views";
+import {validateSchemaDefAgainstMongoose} from "@coreModule/database/utilities/validateSchemaDefAgainstMongoose";
+import {OrderRevisionSchemaDef} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/orderRevision/orderRevision.schema-def";
 
 export type OrderRevisionStatus = "pending" | "completed";
 
-export interface IOrderRevision extends Document, IOwnershipPluginFields {
+export interface IOrderRevision extends Document, IOwnershipPluginFields, ILifeCyclePluginFields {
     company: ICompany;
     order: IOrder;
     delivery: IOrderDelivery;
@@ -70,7 +73,13 @@ const OrderRevisionSchema = new Schema<IOrderRevision>(
 
 ownershipPlugin(OrderRevisionSchema);
 auditPlugin(OrderRevisionSchema);
+lifeCyclePlugin(OrderRevisionSchema);
 applyOrderRevisionIndexes(OrderRevisionSchema);
+validateSchemaDefAgainstMongoose(OrderRevisionSchema, OrderRevisionSchemaDef, "OrderRevision", [
+    "requestedBy",
+    "status",
+    "company",
+]);
 const OrderRevision = model<IOrderRevision>("OrderRevision", OrderRevisionSchema);
 normalizeSchemaPermissions(OrderRevision);
 export default OrderRevision;

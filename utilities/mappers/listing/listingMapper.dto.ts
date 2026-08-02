@@ -1,7 +1,13 @@
 import type {IListing} from "@eCommerceMarketplaceModule/database/schemas/listing/listing";
 import {Listing} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listing/listing.dto";
 import {mapMedia, mapPopulatedRef, mapPopulatedSimpleCurrency, mapPopulatedSimpleUser} from "@coreModule/utilities/mappers/common.mapper";
-import {mapOwnershipToDTO, mapSoftDeleteToDTO} from "@coreModule/utilities/mappers/plugin/pluginMappers.dto";
+import {
+    mapLifeCycleToDTO,
+    mapOwnershipToDTO,
+    mapSoftDeleteToDTO
+} from "@coreModule/utilities/mappers/plugin/pluginMappers.dto";
+import {listingPackageToDTO} from "@eCommerceMarketplaceModule/utilities/mappers/listingPackage/listingPackageMapper.dto";
+import {listingAddOnToDTO} from "@eCommerceMarketplaceModule/utilities/mappers/listingAddOn/listingAddOnMapper.dto";
 
 export function listingToDTO(listing: IListing): Listing {
     return {
@@ -34,10 +40,13 @@ export function listingToDTO(listing: IListing): Listing {
             startAt: p.startAt,
             endAt: p.endAt,
         })),
-        avgRating: (listing as any).avgRating ?? 0,
-        reviewCount: (listing as any).reviewCount ?? 0,
+        listingPackages: listing.listingPackages?.map((pkg) => listingPackageToDTO(pkg)) || undefined,
+        listingAddOns: listing.listingAddOns?.map((addon: any) => listingAddOnToDTO(addon)) || undefined,
+        avgRating: listing.avgRating ?? 0,
+        reviewCount: listing.reviewCount ?? 0,
         ...mapSoftDeleteToDTO(listing),
         ...mapOwnershipToDTO(listing),
+        ...mapLifeCycleToDTO(listing),
     };
 }
 

@@ -9,8 +9,8 @@ import {listingService} from "@eCommerceMarketplaceModule/database/schemas/listi
 import {orderService} from "@eCommerceMarketplaceModule/database/schemas/order/order.service";
 import Review from "@eCommerceMarketplaceModule/database/schemas/review/review";
 import {reviewService} from "@eCommerceMarketplaceModule/database/schemas/review/review.service";
-import {reviewToDTO, reviewsToDTO} from "@eCommerceMarketplaceModule/utilities/mappers/reviews/reviewMapper.dto";
-import {reviewsToSelect} from "@eCommerceMarketplaceModule/utilities/mappers/reviews/reviewMapper.select";
+import {reviewToDTO, reviewsToDTO} from "@eCommerceMarketplaceModule/utilities/mappers/review/reviewMapper.dto";
+import {reviewsToSelect} from "@eCommerceMarketplaceModule/utilities/mappers/review/reviewMapper.select";
 
 async function recalculateListingRating(
     listingId: ObjectId,
@@ -52,24 +52,7 @@ export const {router} = createCrudRouter({
     toDTO: reviewToDTO,
     toDTOArray: reviewsToDTO,
     toSelect: reviewsToSelect,
-    extraListFilter: async ({listingId, orderId, comment, rating}) => {
-        const filter: Record<string, unknown> = {};
-
-        if (listingId) {
-            filter.listing = new ObjectId(listingId);
-        }
-        if (orderId) {
-            filter.order = new ObjectId(orderId);
-        }
-        if (rating != null) {
-            filter.rating = Array.isArray(rating) ? {$in: rating} : rating;
-        }
-        if (comment && typeof comment === "string" && comment.trim()) {
-            filter.comment = {$regex: comment.trim(), $options: "i"};
-        }
-
-        return filter;
-    },
+    /** Domain-guard create (like productReview): completed-order/customer checks; listing+reviewer derived server-side. */
     buildCreateData: async ({orderId, rating, comment, actionUserCtx, company, session, logger, languageCode}) => {
         const order = await orderService.findOneOrThrow(
             {_id: new ObjectId(orderId), company: company._id},

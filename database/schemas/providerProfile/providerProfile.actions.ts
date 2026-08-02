@@ -1,10 +1,10 @@
 import {action} from "@coreModule/api/actionDecorator";
 import {apiValidationException} from "armonia/src/modules/core/helpers/exceptions";
 import type {ActionMessage} from "armonia/src/modules/core/types/shared.types";
-import {CLIENT_SIDE, PAYMENTS} from "@coreModule/environment";
 import ProviderProfile from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile";
 import {providerProfileService} from "@eCommerceMarketplaceModule/database/schemas/providerProfile/providerProfile.service";
 import {stripeConnectAdapter} from "@financeModule/utilities/services/payment/stripeConnectAdapter";
+import {getECommerceMarketplaceConfig} from "@eCommerceMarketplaceModule/utilities/config";
 
 type ConnectOnboardingResult = ActionMessage & {
     url?: string;
@@ -19,10 +19,8 @@ type ConnectStatusResult = ActionMessage & {
 };
 
 function onboardingUrls(): {returnUrl: string; refreshUrl: string} {
-    const base = (CLIENT_SIDE.HOST || "").replace(/\/+$/, "");
-    const returnUrl = PAYMENTS.STRIPE_CONNECT_RETURN_URL || (base ? `${base}/eCommerceMarketplace/providerprofiles?connect=return` : "");
-    const refreshUrl = PAYMENTS.STRIPE_CONNECT_REFRESH_URL || (base ? `${base}/eCommerceMarketplace/providerprofiles?connect=refresh` : "");
-    return {returnUrl, refreshUrl};
+    const {stripeConnectReturnUrl, stripeConnectRefreshUrl} = getECommerceMarketplaceConfig();
+    return {returnUrl: stripeConnectReturnUrl, refreshUrl: stripeConnectRefreshUrl};
 }
 
 export class ProviderProfileActions {

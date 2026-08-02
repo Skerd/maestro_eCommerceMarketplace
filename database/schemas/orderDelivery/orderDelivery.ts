@@ -8,13 +8,16 @@ import { OrderSimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas
 import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
-import { IOwnershipPluginFields } from "@coreModule/database/types/plugin-fields";
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
+import {IOwnershipPluginFields, ILifeCyclePluginFields} from "@coreModule/database/types/plugin-fields";
 import { applyOrderDeliveryIndexes } from "./orderDelivery.indexes";
 import { orderDeliveryViews } from "./orderDelivery.views";
+import {validateSchemaDefAgainstMongoose} from "@coreModule/database/utilities/validateSchemaDefAgainstMongoose";
+import {OrderDeliverySchemaDef} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/orderDelivery/orderDelivery.schema-def";
 
 export type OrderDeliveryStatus = "submitted" | "accepted" | "revision_requested";
 
-export interface IOrderDelivery extends Document, IOwnershipPluginFields {
+export interface IOrderDelivery extends Document, IOwnershipPluginFields, ILifeCyclePluginFields {
     company: ICompany;
     order: IOrder;
     message?: string;
@@ -54,7 +57,9 @@ const OrderDeliverySchema = new Schema<IOrderDelivery>(
 
 ownershipPlugin(OrderDeliverySchema);
 auditPlugin(OrderDeliverySchema);
+lifeCyclePlugin(OrderDeliverySchema);
 applyOrderDeliveryIndexes(OrderDeliverySchema);
+validateSchemaDefAgainstMongoose(OrderDeliverySchema, OrderDeliverySchemaDef, "OrderDelivery", ["status"]);
 const OrderDelivery = model<IOrderDelivery>("OrderDelivery", OrderDeliverySchema);
 normalizeSchemaPermissions(OrderDelivery);
 export default OrderDelivery;

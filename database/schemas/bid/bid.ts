@@ -5,7 +5,7 @@ import {ITaskRequest} from "@eCommerceMarketplaceModule/database/schemas/taskReq
 import {normalizeSchemaPermissions} from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
-import {IOwnershipPluginFields, ISoftDeletePluginFields} from "@coreModule/database/types/plugin-fields";
+import {IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields} from "@coreModule/database/types/plugin-fields";
 import {addModelData} from "@coreModule/database/collections";
 import {CurrencySimpleSnippet} from "@coreModule/database/schemas/currency/currency.snippets";
 import {SimpleUserSnippet} from "@coreModule/database/schemas/user/user.snippets";
@@ -15,16 +15,14 @@ import {BidSchemaDef} from "armonia/src/modules/eCommerceMarketplace/api/eCommer
 import {applyBidIndexes} from "./bid.indexes";
 import {bidViews} from "./bid.views";
 import softDeletePlugin from "@coreModule/database/plugins/softDeletePlugin";
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
 import dayjs from "dayjs";
 import crypto from "crypto";
-import {IListing} from "@eCommerceMarketplaceModule/database/schemas/listing/listing";
-import {ListingSimpleSnippet} from "@eCommerceMarketplaceModule/database/schemas/listing/listing.snippets";
 
 export type BidStatus = "pending" | "accepted" | "rejected";
 
-export interface IBid extends Document, IOwnershipPluginFields, ISoftDeletePluginFields {
+export interface IBid extends Document, IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields {
     name: string;
-    listing?: IListing;
     taskRequest: ITaskRequest;
     bidder: IUser;
     amount: number;
@@ -44,12 +42,6 @@ const BidSchema = new Schema<IBid>(
                 self: {write: "no-permission"},
                 others: {write: "no-permission"},
             },
-        },
-        listing: {
-            type: SchemaTypes.ObjectId,
-            ref: "Listing",
-            required: false,
-            refAllowlist: ListingSimpleSnippet,
         },
         taskRequest: {
             type: SchemaTypes.ObjectId,
@@ -108,6 +100,7 @@ BidSchema.pre("save", function (next) {
 ownershipPlugin(BidSchema);
 softDeletePlugin(BidSchema);
 auditPlugin(BidSchema);
+lifeCyclePlugin(BidSchema);
 applyBidIndexes(BidSchema);
 /** Distinct from propertyManagement `Bid` (tender bids) — shared mongoose name would overwrite. */
 const Bid = model<IBid>("MarketplaceBid", BidSchema, "marketplacebids");

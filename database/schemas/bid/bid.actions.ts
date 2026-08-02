@@ -88,7 +88,6 @@ export class BidActions {
 
         await orderService.create(
             {
-                ...(bid.listing ? {listing: bid.listing} : {}),
                 taskRequest: taskRequest._id,
                 bid: bid._id,
                 customer: taskRequest.requester,

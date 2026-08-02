@@ -9,18 +9,29 @@ export type ProviderProfileSeed = {
     seedKey: string;
     bio: string;
     skills: string[];
+    availability?: {dayOfWeek: number; startTime: string; endTime: string}[];
 };
+
+const weekdayBusinessHours = [
+    {dayOfWeek: 1, startTime: "09:00", endTime: "17:00"},
+    {dayOfWeek: 2, startTime: "09:00", endTime: "17:00"},
+    {dayOfWeek: 3, startTime: "09:00", endTime: "17:00"},
+    {dayOfWeek: 4, startTime: "09:00", endTime: "17:00"},
+    {dayOfWeek: 5, startTime: "09:00", endTime: "17:00"},
+];
 
 export const defaultProviderProfileSeeds: readonly ProviderProfileSeed[] = [
     {
         seedKey: "profile-provider",
         bio: "Professional designer and developer with 10+ years of experience.",
         skills: ["Logo Design", "Web Development", "React", "Node.js"],
+        availability: weekdayBusinessHours,
     },
     {
         seedKey: "profile-customer",
         bio: "Entrepreneur looking for quality services.",
         skills: [],
+        availability: [],
     },
 ];
 
@@ -65,6 +76,7 @@ export async function createProviderProfiles(
                 company: company._id,
                 bio: seed.bio,
                 skills: seed.skills,
+                availability: seed.availability ?? [],
                 createdBy: user._id,
             };
 

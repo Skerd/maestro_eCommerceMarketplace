@@ -7,7 +7,8 @@ import {normalizeSchemaPermissions} from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
 import softDeletePlugin from "@coreModule/database/plugins/softDeletePlugin";
-import {IOwnershipPluginFields, ISoftDeletePluginFields} from "@coreModule/database/types/plugin-fields";
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
+import {IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields} from "@coreModule/database/types/plugin-fields";
 import {addModelData} from "@coreModule/database/collections";
 import {validateSchemaDefAgainstMongoose} from "@coreModule/database/utilities/validateSchemaDefAgainstMongoose";
 import {ReviewSchemaDef} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/review/review.schema-def";
@@ -18,7 +19,7 @@ import {OrderWithTaskOrListingSnippet} from "@eCommerceMarketplaceModule/databas
 import {applyReviewIndexes} from "./review.indexes";
 import {reviewViews} from "./review.views";
 
-export interface IReview extends Document, IOwnershipPluginFields, ISoftDeletePluginFields {
+export interface IReview extends Document, IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields {
     order: IOrder;
     listing: IListing;
     rating: number;
@@ -73,6 +74,7 @@ const ReviewSchema = new Schema<IReview>(
 ownershipPlugin(ReviewSchema);
 auditPlugin(ReviewSchema);
 softDeletePlugin(ReviewSchema);
+lifeCyclePlugin(ReviewSchema);
 applyReviewIndexes(ReviewSchema);
 const Review = model<IReview>("Review", ReviewSchema);
 normalizeSchemaPermissions(Review);

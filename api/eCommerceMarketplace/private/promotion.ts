@@ -1,6 +1,8 @@
 import {ObjectId} from "mongodb";
 import SchemaGuard from "@coreModule/database/security/schemaGuard";
 import {createCrudRouter} from "@coreModule/api/crudRouterFactory";
+import {buildCreateDataFromSchemaDef} from "@coreModule/api/buildUpdateDataFromSchemaDef";
+import {PromotionSchemaDef} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/promotion/promotion.schema-def";
 import {createPromotionFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/promotion/createPromotion.form.validator";
 import {editPromotionFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/promotion/editPromotion.form.validator";
 import {promotionListFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/promotion/promotionList.form.validator";
@@ -10,6 +12,8 @@ import {PromotionActions} from "@eCommerceMarketplaceModule/database/schemas/pro
 import {promotionService} from "@eCommerceMarketplaceModule/database/schemas/promotion/promotion.service";
 import {promotionToDTO, promotionsToDTOArray} from "@eCommerceMarketplaceModule/utilities/mappers/promotion/promotionMapper.dto";
 import {promotionsToSelect} from "@eCommerceMarketplaceModule/utilities/mappers/promotion/promotionMapper.select";
+
+const buildCreate = buildCreateDataFromSchemaDef(PromotionSchemaDef);
 
 export const basePath = "/api/eCommerceMarketplace/promotion";
 export const {router} = createCrudRouter({
@@ -27,14 +31,15 @@ export const {router} = createCrudRouter({
     toDTO: promotionToDTO,
     toDTOArray: promotionsToDTOArray,
     toSelect: promotionsToSelect,
-    buildCreateData: async ({listing: listingId, type, startAt, endAt, session, logger, languageCode, company, ...params}) => {
-        const listing = await listingService.findOne({_id: new ObjectId(listingId), company: company._id, status: "active"}, {session, logger, languageCode});
-        return {
-            listing: listing._id,
-            type: type || "featured",
-            startAt: new Date(startAt),
-            endAt: new Date(endAt),
-        };
+    buildCreateData: async (params) => {
+        const listing = await listingService.findOne(
+            {_id: new ObjectId(params.listing), company: params.company._id, status: "active"},
+            {session: params.session, logger: params.logger, languageCode: params.languageCode},
+        );
+        const data = buildCreate(params);
+        data.listing = listing._id;
+        if (data.type === undefined) data.type = "featured";
+        return data;
     },
     buildUpdateData: async () =>
         ({}) /** Promotion fields use write: no-permission — pause/resume/stop via actions */,

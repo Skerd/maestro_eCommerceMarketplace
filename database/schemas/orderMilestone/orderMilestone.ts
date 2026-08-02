@@ -8,13 +8,16 @@ import { OrderSimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas
 import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
-import { IOwnershipPluginFields } from "@coreModule/database/types/plugin-fields";
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
+import {IOwnershipPluginFields, ILifeCyclePluginFields} from "@coreModule/database/types/plugin-fields";
 import { applyOrderMilestoneIndexes } from "./orderMilestone.indexes";
 import { orderMilestoneViews } from "./orderMilestone.views";
+import {validateSchemaDefAgainstMongoose} from "@coreModule/database/utilities/validateSchemaDefAgainstMongoose";
+import {OrderMilestoneSchemaDef} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/orderMilestone/orderMilestone.schema-def";
 
 export type OrderMilestoneStatus = "pending" | "released" | "delivered";
 
-export interface IOrderMilestone extends Document, IOwnershipPluginFields {
+export interface IOrderMilestone extends Document, IOwnershipPluginFields, ILifeCyclePluginFields {
     company: ICompany;
     order: IOrder;
     name: string;
@@ -66,7 +69,9 @@ const OrderMilestoneSchema = new Schema<IOrderMilestone>(
 
 ownershipPlugin(OrderMilestoneSchema);
 auditPlugin(OrderMilestoneSchema);
+lifeCyclePlugin(OrderMilestoneSchema);
 applyOrderMilestoneIndexes(OrderMilestoneSchema);
+validateSchemaDefAgainstMongoose(OrderMilestoneSchema, OrderMilestoneSchemaDef, "OrderMilestone", ["status"]);
 const OrderMilestone = model<IOrderMilestone>("OrderMilestone", OrderMilestoneSchema);
 normalizeSchemaPermissions(OrderMilestone);
 export default OrderMilestone;

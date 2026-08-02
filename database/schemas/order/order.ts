@@ -9,7 +9,8 @@ import {normalizeSchemaPermissions} from"@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
 import softDeletePlugin from "@coreModule/database/plugins/softDeletePlugin";
-import {IOwnershipPluginFields, ISoftDeletePluginFields} from"@coreModule/database/types/plugin-fields";
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
+import {IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields} from "@coreModule/database/types/plugin-fields";
 import {addModelData} from"@coreModule/database/collections";
 import {CurrencySimpleSnippet} from"@coreModule/database/schemas/currency/currency.snippets";
 import {SimpleUserSnippet} from"@coreModule/database/schemas/user/user.snippets";
@@ -25,7 +26,7 @@ import crypto from "crypto";
 
 export type OrderStatus = "pending" | "accepted" | "in_progress" | "completed" | "cancelled";
 
-export interface IOrder extends Document, IOwnershipPluginFields, ISoftDeletePluginFields {
+export interface IOrder extends Document, IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields {
     name: string;
     listing?: IListing;
     taskRequest?: ITaskRequest;
@@ -115,6 +116,7 @@ OrderSchema.pre("save", function (next) {
 ownershipPlugin(OrderSchema);
 auditPlugin(OrderSchema);
 softDeletePlugin(OrderSchema);
+lifeCyclePlugin(OrderSchema);
 applyOrderIndexes(OrderSchema);
 const Order = model<IOrder>("Order", OrderSchema);
 normalizeSchemaPermissions(Order);

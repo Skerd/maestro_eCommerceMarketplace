@@ -7,7 +7,7 @@ export const orderRevisionSheetView: ViewConfig = {
     apiUrl: "/api/eCommerceMarketplace/orderRevision",
     header: {
         titleField: "status",
-        subtitleKey: "eCommerce.orderRevision",
+        subtitleKey: "orderRevisionSubtitle",
         showCloseButton: true,
     },
     nodes: [
@@ -76,8 +76,8 @@ export const orderRevisionCreateFormView: ViewConfig = {
     viewType: "form",
     viewMode: "create",
     accessModel: "orderrevisions",
-    apiUrl: "/api/eCommerceMarketplace/orderRevision",
-    method: "PUT",
+    apiUrl: "/api/eCommerceMarketplace/order/requestRevision",
+    method: "POST",
     nodes: [
         {
             render: "#FormGrid",
@@ -86,10 +86,11 @@ export const orderRevisionCreateFormView: ViewConfig = {
                 {
                     render: "#Field",
                     field: {
-                        name: "deliveryId",
-                        widget: "#Input",
-                        label: "form.deliveryIdLabel",
+                        name: "_id",
+                        widget: "#ApiSelect",
+                        label: "form.orderIdLabel",
                         required: true,
+                        widgetProps: {apiUrl: "/api/eCommerceMarketplace/order/select"},
                     },
                 },
                 {

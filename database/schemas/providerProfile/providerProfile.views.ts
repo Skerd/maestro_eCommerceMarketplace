@@ -1,5 +1,15 @@
 import type {ViewConfig} from "armonia/src/modules/core/api/auxiliary/private/viewConfig";
 
+const weekdayOptions = [
+    {value: "0", label: "weekday.0"},
+    {value: "1", label: "weekday.1"},
+    {value: "2", label: "weekday.2"},
+    {value: "3", label: "weekday.3"},
+    {value: "4", label: "weekday.4"},
+    {value: "5", label: "weekday.5"},
+    {value: "6", label: "weekday.6"},
+];
+
 export const providerProfileSheetView: ViewConfig = {
     model: "providerprofiles",
     viewType: "sheet",
@@ -109,6 +119,60 @@ export const providerProfileSheetView: ViewConfig = {
             ],
         },
         {
+            render: "#ReferencesViewModeScope",
+            props: {storageKey: "providerProfile.sheet.availability", defaultMode: "cards"},
+            children: [
+                {
+                    render: "#SheetGroup",
+                    dependent: "availability",
+                    permissions: {read: "availability"},
+                    props: {title: "availability", titleActions: "#ReferencesViewModeToggle"},
+                    children: [
+                        {
+                            render: "div",
+                            props: {className: "space-y-2"},
+                            children: [
+                                {
+                                    render: "#SheetEmbeddedItemsList",
+                                    permissions: {read: "availability"},
+                                    field: {
+                                        name: "availability",
+                                        widget: "#SheetEmbeddedItemsList",
+                                        widgetProps: {
+                                            cardColumns: 3,
+                                            fields: [
+                                                {
+                                                    name: "dayOfWeek",
+                                                    type: "text",
+                                                    languageKeyCategory: "weekday",
+                                                    labelKey: "dayOfWeek",
+                                                    className: "text-sm font-medium",
+                                                },
+                                                {
+                                                    name: "startTime",
+                                                    type: "text",
+                                                    labelKey: "startTime",
+                                                    className: "text-sm",
+                                                },
+                                                {
+                                                    name: "endTime",
+                                                    type: "text",
+                                                    labelKey: "endTime",
+                                                    className: "text-sm",
+                                                },
+                                            ],
+                                            compactSummaryFields: ["dayOfWeek", "startTime", "endTime"],
+                                            compactSummaryJoinSeparator: " - ",
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
             render: "#SheetGroup",
             props: {title: "portfolio"},
             children: [
@@ -141,38 +205,121 @@ export const providerProfileEditFormView: ViewConfig = {
     method: "PATCH",
     nodes: [
         {
-            render: "#FormGrid",
-            props: {columns: 1},
+            render: "#TitleWithCollapse",
+            props: {title: "form.section.profile"},
             children: [
                 {
-                    render: "#Field",
-                    field: {
-                        name: "bio",
-                        widget: "#Textarea",
-                        label: "form.bioLabel",
-                        widgetProps: {className: "min-h-[140px]"},
-                    },
-                },
-                {
-                    render: "#Field",
-                    field: {
-                        name: "skills",
-                        widget: "#StringArrayField",
-                        label: "form.skillsLabel",
-                    },
-                },
-                {
-                    render: "#Field",
-                    field: {
-                        name: "portfolio",
-                        widget: "#MediaField",
-                        label: "form.portfolioLabel",
-                        widgetProps: {
-                            mediaType: "file",
-                            mode: "multiple",
-                            maxCount: 20,
+                    render: "#FormGrid",
+                    props: {columns: 1},
+                    children: [
+                        {
+                            render: "#Field",
+                            field: {
+                                name: "bio",
+                                widget: "#Textarea",
+                                label: "form.bioLabel",
+                                widgetProps: {className: "min-h-[140px]"},
+                            },
                         },
-                    },
+                        {
+                            render: "#Field",
+                            field: {
+                                name: "skills",
+                                widget: "#StringArrayField",
+                                label: "form.skillsLabel",
+                                placeholder: "form.skillsPlaceholder",
+                                widgetProps: {
+                                    removeTooltipKey: "form.skillsRemoveTooltip",
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            // FormRepeater owns TitleWithCollapse when `title` is set so the add button
+            // stays in the section header (inBetween), not below it.
+            render: "#Field",
+            permissions: {write: "availability"},
+            field: {
+                name: "availability",
+                widget: "#FormRepeater",
+                widgetProps: {
+                    title: "form.section.availability",
+                    arrayField: "availability",
+                    defaultItem: {dayOfWeek: "1", startTime: "09:00", endTime: "17:00"},
+                    addLabel: "form.availabilityAddRow",
+                    removeLabel: "form.availabilityRemoveRow",
+                    rowTitleFields: ["dayOfWeek", "startTime", "endTime"],
+                    rowTitleSeparators: [" ", " - "],
+                    rowTitlePlaceholder: "form.availabilityRowTitle",
+                    rowTemplate: [
+                        {
+                            render: "#FormGrid",
+                            props: {columns: 3},
+                            children: [
+                                {
+                                    render: "#Field",
+                                    field: {
+                                        name: "dayOfWeek",
+                                        widget: "#SimpleSelect",
+                                        label: "form.dayOfWeekLabel",
+                                        required: true,
+                                        widgetProps: {options: weekdayOptions},
+                                    },
+                                },
+                                {
+                                    render: "#Field",
+                                    field: {
+                                        name: "startTime",
+                                        widget: "#DateInput",
+                                        label: "form.startTimeLabel",
+                                        placeholder: "form.startTimePlaceholder",
+                                        required: true,
+                                        widgetProps: {valueFormat: "HH:mm", timeOnly: true},
+                                    },
+                                },
+                                {
+                                    render: "#Field",
+                                    field: {
+                                        name: "endTime",
+                                        widget: "#DateInput",
+                                        label: "form.endTimeLabel",
+                                        placeholder: "form.endTimePlaceholder",
+                                        required: true,
+                                        widgetProps: {valueFormat: "HH:mm", timeOnly: true},
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+            },
+        },
+        {
+            render: "#TitleWithCollapse",
+            props: {title: "form.section.portfolio"},
+            permissions: {write: "portfolio"},
+            children: [
+                {
+                    render: "#FormGrid",
+                    props: {columns: 1},
+                    children: [
+                        {
+                            render: "#Field",
+                            field: {
+                                name: "portfolio",
+                                widget: "#MediaField",
+                                label: "form.portfolioLabel",
+                                widgetProps: {
+                                    mediaType: "file",
+                                    mode: "multiple",
+                                    maxCount: 20,
+                                },
+                            },
+                        },
+                    ],
                 },
             ],
         },

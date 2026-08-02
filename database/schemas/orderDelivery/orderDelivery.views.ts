@@ -7,7 +7,7 @@ export const orderDeliverySheetView: ViewConfig = {
     apiUrl: "/api/eCommerceMarketplace/orderDelivery",
     header: {
         titleField: "status",
-        subtitleKey: "eCommerce.orderDelivery",
+        subtitleKey: "orderDeliverySubtitle",
         showCloseButton: true,
     },
     nodes: [
@@ -56,8 +56,8 @@ export const orderDeliveryCreateFormView: ViewConfig = {
     viewType: "form",
     viewMode: "create",
     accessModel: "orderdeliveries",
-    apiUrl: "/api/eCommerceMarketplace/orderDelivery",
-    method: "PUT",
+    apiUrl: "/api/eCommerceMarketplace/order/submitDelivery",
+    method: "POST",
     nodes: [
         {
             render: "#FormGrid",
@@ -66,7 +66,7 @@ export const orderDeliveryCreateFormView: ViewConfig = {
                 {
                     render: "#Field",
                     field: {
-                        name: "orderId",
+                        name: "_id",
                         widget: "#ApiSelect",
                         label: "form.orderIdLabel",
                         required: true,

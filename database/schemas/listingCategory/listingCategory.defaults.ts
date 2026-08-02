@@ -148,7 +148,7 @@ function assertAcyclicSortedSeeds(seeds: readonly CategorySeed[]): CategorySeed[
 
 /**
  * Ensures default marketplace categories exist for the company (upsert by `company` + `slug`).
- * Inserts roots before children; sets `parent` from resolved parent slug.
+ * Inserts roots before children; sets `parentListingCategory` from resolved parent slug.
  * Returns the three legacy anchor categories for downstream demo seed data (listings, tasks, etc.).
  */
 export async function createCategories(
@@ -157,6 +157,12 @@ export async function createCategories(
 ): Promise<{ catDesign: IListingCategory; catDev: IListingCategory; catWriting: IListingCategory }> {
     const logger = getLogger("mongoDbInitialization-createCategories", parentLogger);
     logger.start("Creating categories...");
+
+    // One-time rename: legacy `parent` → `parentListingCategory`
+    await ListingCategory.collection.updateMany(
+        {parent: {$exists: true}, parentListingCategory: {$exists: false}},
+        [{$set: {parentListingCategory: "$parent"}}, {$unset: "parent"}],
+    );
 
     const orderedSeeds = assertAcyclicSortedSeeds(defaultListingCategorySeeds);
     const parentIdBySlug = new Map<string, HydratedDocument<IListingCategory>["_id"]>();
@@ -198,7 +204,7 @@ export async function createCategories(
                     ? {
                           $set: {
                               ...baseSet,
-                              parent: parentId,
+                              parentListingCategory: parentId,
                           },
                           $setOnInsert: {
                               company: company._id,
@@ -207,7 +213,7 @@ export async function createCategories(
                       }
                     : {
                           $set: baseSet,
-                          $unset: { parent: 1 },
+                          $unset: { parentListingCategory: 1, parent: 1 },
                           $setOnInsert: {
                               company: company._id,
                               createdBy: company.createdBy,
@@ -219,7 +225,7 @@ export async function createCategories(
             const doc = await ListingCategory.findOne({
                 slug: seed.slug,
                 company: company._id,
-            }).select("_id parent");
+            }).select("_id parentListingCategory");
 
             if (doc?._id) {
                 parentIdBySlug.set(seed.slug, doc._id);

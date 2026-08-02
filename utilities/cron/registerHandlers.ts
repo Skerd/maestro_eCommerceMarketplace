@@ -12,7 +12,7 @@ const GLOBAL_CRON = {
 
 export function registerECommerceMarketplaceCronHandlers(): void {
     registerCronHandler({
-        code: "eCommerce.orderAutoComplete",
+        code: "eCommerceMarketplace.orderAutoComplete",
         handler: async ctx => {
             await runOrderAutoComplete(ctx.logger);
         },
@@ -26,7 +26,7 @@ export function registerECommerceMarketplaceCronHandlers(): void {
     });
 
     registerCronHandler({
-        code: "eCommerce.taskRequestExpiry",
+        code: "eCommerceMarketplace.taskRequestExpiry",
         handler: async ctx => {
             await runTaskRequestExpiry(ctx.logger);
         },

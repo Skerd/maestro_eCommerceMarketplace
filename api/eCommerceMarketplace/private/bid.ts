@@ -4,13 +4,13 @@ import {BidActions} from "@eCommerceMarketplaceModule/database/schemas/bid/bid.a
 import Bid from "@eCommerceMarketplaceModule/database/schemas/bid/bid";
 import {bidService} from "@eCommerceMarketplaceModule/database/schemas/bid/bid.service";
 import {taskRequestService} from "@eCommerceMarketplaceModule/database/schemas/taskRequest/taskRequest.service";
-import {bidToDTO, bidsToDTOArray} from "@eCommerceMarketplaceModule/utilities/mappers/bids/bidMapper.dto";
+import {bidToDTO, bidsToDTOArray} from "@eCommerceMarketplaceModule/utilities/mappers/bid/bidMapper.dto";
 import {createBidFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/bid/createBid.form.validator";
 import {editBidFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/bid/editBid.form.validator";
 import {bidListFormSchema} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/bid/bidList.form.validator";
 import {apiValidationException} from "armonia/src/modules/core/helpers/exceptions";
 import type {SelectResponse} from "armonia/src/modules/core/types/shared.types";
-import {bidsToSelect} from "@eCommerceMarketplaceModule/utilities/mappers/bids/bidMapper.select";
+import {bidsToSelect} from "@eCommerceMarketplaceModule/utilities/mappers/bid/bidMapper.select";
 import SchemaGuard from "@coreModule/database/security/schemaGuard";
 
 export const basePath = "/api/eCommerceMarketplace/bid";
@@ -26,11 +26,6 @@ export const {router} = createCrudRouter({
     toDTO: bidToDTO,
     toDTOArray: bidsToDTOArray,
     toSelect: bidsToSelect,
-    extraListFilter: async ({taskRequestId, bidderId, listingId}) => ({
-        ...(listingId ? {listing: new ObjectId(listingId)} : {}),
-        ...(taskRequestId ? {taskRequest: new ObjectId(taskRequestId)} : {}),
-        ...(bidderId ? {bidder: new ObjectId(bidderId)} : {}),
-    }),
     overrideSelectHandler: async (params): Promise<SelectResponse> => {
         const {logger, languageCode, company, name, limit = 20, page = 1, actionUserCtx} = params;
 
@@ -54,24 +49,25 @@ export const {router} = createCrudRouter({
 
         return {data: bidsToSelect(bids), total};
     },
-    buildCreateData: async ({listing: listingId, taskRequest: taskRequestId, amount, proposal, deliveryDays, actionUserCtx, company, logger, languageCode, session}) => {
-
+    /** Domain-guard create (like productReview): open-task check; currency/bidder derived server-side. status default on schema. */
+    buildCreateData: async ({taskRequest: taskRequestId, amount, proposal, deliveryDays, actionUserCtx, company, logger, languageCode, session}) => {
         const taskRequest = await taskRequestService.findOneOrThrow({_id: new ObjectId(taskRequestId), company: company._id}, {session, logger, languageCode});
         if ((taskRequest as any).status !== "open") {
             throw apiValidationException("task_request_not_open", null, null, languageCode);
         }
 
+        const currency = (taskRequest as any).currency?._id ?? taskRequest.currency;
+
         return {
-            ...(listingId ? {listing: new ObjectId(listingId)} : {}),
-            taskRequest: taskRequest,
+            taskRequest: new ObjectId(taskRequestId),
             bidder: actionUserCtx.userId,
             amount,
-            currency: taskRequest.currency,
-            proposal: proposal,
-            deliveryDays: deliveryDays ?? 1,
-            status: "pending",
+            currency,
+            proposal,
+            ...(deliveryDays !== undefined ? {deliveryDays} : {}),
         };
     },
+    /** Accept/reject via BidActions. */
     buildUpdateData: async () => ({}),
     actions: BidActions,
     rateLimits: {read: 60, write: 30, delete: 20},

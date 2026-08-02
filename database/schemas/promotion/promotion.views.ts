@@ -52,6 +52,19 @@ export const promotionSheetView: ViewConfig = {
                         },
                         {
                             render: "#SmallInfoCard",
+                            permissions: {read: "type"},
+                            field: {
+                                name: "type",
+                                widget: "#SmallInfoCard",
+                                label: "type",
+                                widgetProps: {
+                                    icon: "#Tag",
+                                    languageKeyCategory: "type_values",
+                                },
+                            },
+                        },
+                        {
+                            render: "#SmallInfoCard",
                             permissions: {read: "lifecycleStatus"},
                             field: {
                                 name: "lifecycleStatus",
@@ -123,6 +136,7 @@ const promotionFormFields: ViewConfig["nodes"] = [
                     name: "listing",
                     widget: "#ApiSelect",
                     label: "form.listingLabel",
+                    placeholder: "form.listingPlaceholder",
                     required: true,
                     widgetProps: {
                         apiUrl: "/api/eCommerceMarketplace/listing/select",
@@ -137,6 +151,7 @@ const promotionFormFields: ViewConfig["nodes"] = [
                     widget: "#SimpleSelect",
                     label: "form.promotionTypeLabel",
                     placeholder: "form.promotionTypePlaceholder",
+                    required: true,
                     widgetProps: {
                         options: [
                             {value: "featured", label: "form.promotionTypeFeatured"},
@@ -168,9 +183,9 @@ const promotionFormFields: ViewConfig["nodes"] = [
                     widgetProps: {valueFormat: "yyyy-MM-dd HH:mm"},
                 },
             },
-        ]
-    }
-]
+        ],
+    },
+];
 
 export const promotionCreateFormView: ViewConfig = {
     model: "promotions",

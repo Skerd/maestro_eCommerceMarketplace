@@ -73,24 +73,6 @@ export const bidSheetView: ViewConfig = {
                                 },
                             },
                         },
-                        // {
-                        //     render: "#SmallInfoCard",
-                        //     permissions: {read: "listing"},
-                        //     field: {
-                        //         name: "listing",
-                        //         widget: "#SmallInfoCard",
-                        //         label: "listing",
-                        //         widgetProps: {
-                        //             icon: "#Package",
-                        //             valuePath: ["listing.title"],
-                        //             linkedRefPath: "listing",
-                        //             linkedSheetModel: "listings",
-                        //             linkedSheetWidget: "#ListingSheetView",
-                        //             linkedSheetEntityProp: "listing",
-                        //             linkedSheetValueField: "title",
-                        //         },
-                        //     },
-                        // },
                         {
                             render: "#SmallInfoCard",
                             permissions: {read: "taskRequest"},
@@ -156,15 +138,6 @@ const bidCreateFields: ViewConfig["nodes"] = [
         render: "#FormGrid",
         props: {columns: 3},
         children: [
-            // {
-            //     render: "#Field",
-            //     field: {
-            //         name: "listing",
-            //         widget: "#ApiSelect",
-            //         label: "form.listingLabel",
-            //         widgetProps: {apiUrl: "/api/eCommerceMarketplace/listing/select"},
-            //     },
-            // },
             {
                 render: "#Field",
                 field: {

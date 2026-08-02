@@ -7,7 +7,7 @@ export const listingCategorySheetView: ViewConfig = {
     apiUrl: "/api/eCommerceMarketplace/listingCategory",
     header: {
         titleField: "name",
-        subtitleKey: "categorySubtitle",
+        subtitleKey: "listingCategorySubtitle",
         showCloseButton: true,
     },
     nodes: [
@@ -51,16 +51,17 @@ export const listingCategorySheetView: ViewConfig = {
                         },
                         {
                             render: "#SmallInfoCard",
+                            permissions: {read: "parentListingCategory"},
                             field: {
-                                name: "parent.name",
+                                name: "parentListingCategory.name",
                                 widget: "#SmallInfoCard",
-                                label: "parentCategory",
+                                label: "parentListingCategory",
                                 widgetProps: {
                                     icon: "#IconCategory2",
-                                    linkedRefPath: "parent",
+                                    linkedRefPath: "parentListingCategory",
                                     linkedSheetModel: "listingcategories",
                                     linkedSheetWidget: "#ListingCategorySheetView",
-                                    linkedSheetEntityProp: "parent",
+                                    linkedSheetEntityProp: "parentListingCategory",
                                 },
                             },
                         },
@@ -71,7 +72,7 @@ export const listingCategorySheetView: ViewConfig = {
     ],
 };
 
-/** Create: optional slug (generated server-side when omitted); optional parent. */
+/** Create/edit: slug is auto-generated on create (LCAT-{name}-{XXXXXXXX}) and is not editable. */
 const categoryCreateFormNodes: ViewConfig["nodes"] = [
     {
         render: "#FormGrid",
@@ -90,20 +91,10 @@ const categoryCreateFormNodes: ViewConfig["nodes"] = [
             {
                 render: "#Field",
                 field: {
-                    name: "slug",
-                    widget: "#Input",
-                    label: "form.slugLabel",
-                    placeholder: "form.slugPlaceholder",
-                    required: false,
-                },
-            },
-            {
-                render: "#Field",
-                field: {
-                    name: "parentId",
+                    name: "parentListingCategory",
                     widget: "#ApiSelect",
-                    label: "form.parentCategoryLabel",
-                    placeholder: "form.parentCategoryPlaceholder",
+                    label: "form.parentListingCategoryLabel",
+                    placeholder: "form.parentListingCategoryPlaceholder",
                     widgetProps: {
                         apiUrl: "/api/eCommerceMarketplace/listingCategory/select",
                         normalizeEmptyToUndefined: true,
@@ -142,20 +133,10 @@ const categoryEditFormNodes: ViewConfig["nodes"] = [
             {
                 render: "#Field",
                 field: {
-                    name: "slug",
-                    widget: "#Input",
-                    label: "form.slugLabel",
-                    placeholder: "form.slugPlaceholder",
-                    required: false,
-                },
-            },
-            {
-                render: "#Field",
-                field: {
-                    name: "parent",
+                    name: "parentListingCategory",
                     widget: "#ApiSelect",
-                    label: "form.parentCategoryLabel",
-                    placeholder: "form.parentCategoryPlaceholder",
+                    label: "form.parentListingCategoryLabel",
+                    placeholder: "form.parentListingCategoryPlaceholder",
                     widgetProps: {
                         apiUrl: "/api/eCommerceMarketplace/listingCategory/select",
                         normalizeEmptyToUndefined: true,

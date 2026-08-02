@@ -9,7 +9,11 @@ import { COLUMN_TYPE } from "armonia/src/modules/core/database/filter/typeOperat
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
 import softDeletePlugin from "@coreModule/database/plugins/softDeletePlugin";
-import { IOwnershipPluginFields, ISoftDeletePluginFields } from "@coreModule/database/types/plugin-fields";
+import {
+    ILifeCyclePluginFields,
+    IOwnershipPluginFields,
+    ISoftDeletePluginFields
+} from "@coreModule/database/types/plugin-fields";
 import { addModelData } from "@coreModule/database/collections";
 import { CurrencySimpleSnippet } from "@coreModule/database/schemas/currency/currency.snippets";
 import { CountrySimpleSnippet } from "@coreModule/database/schemas/country/country.snippets";
@@ -19,6 +23,8 @@ import { MediaSimpleSnippet } from "@coreModule/database/schemas/media/media.sni
 import { SimpleUserSnippet } from "@coreModule/database/schemas/user/user.snippets";
 import { ListingCategorySimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory.snippets";
 import { PromotionSimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas/promotion/promotion.snippets";
+import { ListingPackageSimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas/listingPackage/listingPackage.snippets";
+import { ListingAddOnSimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas/listingAddOn/listingAddOn.snippets";
 import {validateSchemaDefAgainstMongoose} from "@coreModule/database/utilities/validateSchemaDefAgainstMongoose";
 import {ListingSchemaDef} from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/listing/listing.schema-def";
 import { applyListingIndexes } from "./listing.indexes";
@@ -27,11 +33,14 @@ import {ICountry} from "@coreModule/database/schemas/country/country";
 import {IState} from "@coreModule/database/schemas/state/state";
 import {ICity} from "@coreModule/database/schemas/city/city";
 import {IListingCategory} from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory";
+import type {IListingPackage} from "@eCommerceMarketplaceModule/database/schemas/listingPackage/listingPackage";
+import type {IListingAddOn} from "@eCommerceMarketplaceModule/database/schemas/listingAddOn/listingAddOn";
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
 
 export type ListingStatus = "draft" | "active" | "inactive";
 export type PricingType = "fixed" | "hourly";
 
-export interface IListing extends Document, IOwnershipPluginFields, ISoftDeletePluginFields {
+export interface IListing extends Document, IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields {
     name: string;
     title: string;
     description?: string;
@@ -54,6 +63,8 @@ export interface IListing extends Document, IOwnershipPluginFields, ISoftDeleteP
     requirements?: string[];
     tags?: string[];
     promotions?: any[];
+    listingPackages?: IListingPackage[];
+    listingAddOns?: IListingAddOn[];
     avgRating?: number;
     reviewCount?: number;
 }
@@ -229,6 +240,40 @@ const ListingSchema = new Schema<IListing>(
                 others: {write: "no-permission"},
             }
         },
+        listingPackages: {
+            type: [{type: SchemaTypes.ObjectId, ref: "ListingPackage"}],
+            default: [],
+            refAllowlist: ListingPackageSimpleSnippet,
+            /** objectId cell → badges; label from each package via refDisplayKey. */
+            dynamicTableConfiguration: {
+                cellType: COLUMN_TYPE.OBJECT_ID,
+                refDisplayKey: ["name"],
+                maxInlineItems: 1,
+                filterable: false,
+                sortable: false,
+            },
+            permissions: {
+                self: {write: "no-permission"},
+                others: {write: "no-permission"},
+            }
+        },
+        listingAddOns: {
+            type: [{type: SchemaTypes.ObjectId, ref: "ListingAddOn"}],
+            default: [],
+            refAllowlist: ListingAddOnSimpleSnippet,
+            /** objectId cell → badges; label from each add-on via refDisplayKey. */
+            dynamicTableConfiguration: {
+                cellType: COLUMN_TYPE.OBJECT_ID,
+                refDisplayKey: ["name"],
+                maxInlineItems: 1,
+                filterable: false,
+                sortable: false,
+            },
+            permissions: {
+                self: {write: "no-permission"},
+                others: {write: "no-permission"},
+            }
+        },
         avgRating: {
             type: SchemaTypes.Number,
             default: 0,
@@ -275,10 +320,11 @@ ListingSchema.pre("save", function (next) {
 ownershipPlugin(ListingSchema);
 auditPlugin(ListingSchema);
 softDeletePlugin(ListingSchema);
+lifeCyclePlugin(ListingSchema);
 applyListingIndexes(ListingSchema);
 const Listing = model<IListing>("Listing", ListingSchema);
 export default Listing;
 
 normalizeSchemaPermissions(Listing);
 addModelData(Listing, listingViews);
-validateSchemaDefAgainstMongoose(ListingSchema, ListingSchemaDef, "Listing", ["name", "provider", "status", "promotions", "avgRating", "reviewCount"]);
+validateSchemaDefAgainstMongoose(ListingSchema, ListingSchemaDef, "Listing", ["name", "provider", "status", "promotions", "listingPackages", "listingAddOns", "avgRating", "reviewCount"]);

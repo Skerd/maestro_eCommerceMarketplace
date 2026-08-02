@@ -36,44 +36,46 @@ export const {router} = createCrudRouter({
     toDTO: bookingToDTO,
     toDTOArray: bookingsToDTOArray,
     toSelect: bookingsToSelect,
-    extraListFilter: async ({orderId, providerId, company, logger, languageCode, actionUserCtx}) => {
-        if (orderId) {
-            const order = await orderService.findOne(
-                {_id: new ObjectId(orderId), company: company._id},
-                {logger, languageCode},
-                "customer provider",
-                "_id customer provider",
-            );
-
-            if (!order) {
-                throw apiValidationException("order_not_found", null, null, languageCode);
-            }
-
-            const customerId = resolveUserId((order as any).customer);
-            const providerIdFromOrder = resolveUserId((order as any).provider);
-            const currentUserId = actionUserCtx.userId?.toString?.();
-
-            if (customerId !== currentUserId && providerIdFromOrder !== currentUserId && !actionUserCtx.isAdmin) {
-                throw apiValidationException("only_order_parties_can_view_booking", null, null, languageCode);
-            }
-
-            return {order: new ObjectId(orderId)};
+    extraListFilter: async ({actionUserCtx, company, logger, languageCode}) => {
+        if (actionUserCtx.isAdmin) {
+            return {};
         }
 
-        if (providerId) {
-            return {provider: new ObjectId(providerId)};
+        const userId = actionUserCtx.userId?.toString?.();
+        if (!userId) {
+            throw apiValidationException("unauthorized", null, null, languageCode);
         }
 
-        return {provider: actionUserCtx.userId};
+        const myOrders = await orderService.find(
+            {
+                company: company._id,
+                $or: [
+                    {customer: new ObjectId(userId)},
+                    {provider: new ObjectId(userId)},
+                ],
+            },
+            {logger, languageCode},
+            null,
+            "_id",
+        );
+        const orderIds = myOrders.map((o: any) => o._id);
+
+        return {
+            $or: [
+                {provider: new ObjectId(userId)},
+                ...(orderIds.length > 0 ? [{order: {$in: orderIds}}] : []),
+            ],
+        };
     },
-    buildCreateData: async ({orderId, startAt, endAt, timezone, actionUserCtx, company, session, logger, languageCode}) => {
+    /** Domain-guard create (like productReview): order-party auth, uniqueness; provider derived from order. */
+    buildCreateData: async ({order: orderRef, startAt, endAt, timezone, actionUserCtx, company, session, logger, languageCode}) => {
         const userId = actionUserCtx.userId?.toString?.();
         if (!userId) {
             throw apiValidationException("unauthorized", null, null, languageCode);
         }
 
         const order = await orderService.findOneOrThrow(
-            {_id: new ObjectId(orderId), company: company._id},
+            {_id: new ObjectId(orderRef), company: company._id},
             {session, logger, languageCode},
             "customer provider",
             "_id customer provider",
@@ -87,7 +89,7 @@ export const {router} = createCrudRouter({
         }
 
         const existing = await bookingService.findOne(
-            {order: new ObjectId(orderId)},
+            {order: new ObjectId(orderRef)},
             {session, logger, languageCode},
         );
 
@@ -100,7 +102,7 @@ export const {router} = createCrudRouter({
         assertValidBookingRange(startDate, endDate, languageCode);
 
         return {
-            order: new ObjectId(orderId),
+            order: new ObjectId(orderRef),
             provider: new ObjectId(providerId!),
             startAt: startDate,
             endAt: endDate,

@@ -7,7 +7,7 @@ export const reviewSheetView: ViewConfig = {
     apiUrl: "/api/eCommerceMarketplace/review",
     header: {
         titleField: "listing.title",
-        subtitleKey: "eCommerce.review",
+        subtitleKey: "reviewSubtitle",
         showCloseButton: true,
     },
     nodes: [

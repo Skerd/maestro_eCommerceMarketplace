@@ -1,6 +1,6 @@
 import { ITaskRequest } from "@eCommerceMarketplaceModule/database/schemas/taskRequest/taskRequest";
 import { TaskRequest } from "armonia/src/modules/eCommerceMarketplace/api/eCommerceMarketplace/private/taskRequest/taskRequest.dto";
-import { mapOwnershipToDTO, mapSoftDeleteToDTO } from "@coreModule/utilities/mappers/plugin/pluginMappers.dto";
+import {mapOwnershipToDTO, mapSoftDeleteToDTO, mapLifeCycleToDTO} from "@coreModule/utilities/mappers/plugin/pluginMappers.dto";
 import {mapMedia, mapPopulatedRef, mapPopulatedSimpleCurrency, mapPopulatedUserWithPhoto,} from "@coreModule/utilities/mappers/common.mapper";
 
 export function taskRequestToDTO(taskRequest: ITaskRequest, bidCount?: number): TaskRequest {
@@ -31,6 +31,7 @@ export function taskRequestToDTO(taskRequest: ITaskRequest, bidCount?: number): 
         bidCount,
         ...mapSoftDeleteToDTO(taskRequest),
         ...mapOwnershipToDTO(taskRequest),
+        ...mapLifeCycleToDTO(taskRequest),
     };
 }
 

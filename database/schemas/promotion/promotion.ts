@@ -6,7 +6,7 @@ import { ICompany } from "@coreModule/database/schemas/company/company";
 import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
-import {IOwnershipPluginFields, ISoftDeletePluginFields} from "@coreModule/database/types/plugin-fields";
+import {IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields} from "@coreModule/database/types/plugin-fields";
 import { addModelData } from "@coreModule/database/collections";
 import { CompanyBlankSnippet } from "@coreModule/database/schemas/company/company.snippets";
 import { ListingSimpleSnippet } from "@eCommerceMarketplaceModule/database/schemas/listing/listing.snippets";
@@ -16,11 +16,13 @@ import { applyPromotionIndexes } from "./promotion.indexes";
 import { promotionViews } from "./promotion.views";
 import softDeletePlugin from "@coreModule/database/plugins/softDeletePlugin";
 
+import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
+
 export type PromotionType = "featured" | "sponsored";
 
 export type PromotionLifecycleStatus = "active" | "paused" | "stopped";
 
-export interface IPromotion extends Document, IOwnershipPluginFields, ISoftDeletePluginFields {
+export interface IPromotion extends Document, IOwnershipPluginFields, ISoftDeletePluginFields, ILifeCyclePluginFields {
     name: string;
     listing: IListing;
     company: ICompany;
@@ -97,6 +99,7 @@ PromotionSchema.pre("save", function (next) {
 ownershipPlugin(PromotionSchema);
 auditPlugin(PromotionSchema);
 softDeletePlugin(PromotionSchema);
+lifeCyclePlugin(PromotionSchema);
 applyPromotionIndexes(PromotionSchema);
 const Promotion = model<IPromotion>("Promotion", PromotionSchema);
 normalizeSchemaPermissions(Promotion);

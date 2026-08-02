@@ -1,6 +1,7 @@
 import type {HydratedDocument} from "mongoose";
 import {ObjectId} from "mongodb";
 import ListingAddOn, {type IListingAddOn} from "./listingAddOn";
+import Listing from "@eCommerceMarketplaceModule/database/schemas/listing/listing";
 import {getLogger, serverLogger} from "@coreModule/loggers/serverLog";
 import {ICompany} from "@coreModule/database/schemas/company/company";
 import {IUser} from "@coreModule/database/schemas/user/user";
@@ -136,8 +137,10 @@ export async function createListingAddOns(
                 name: seed.name,
             });
 
+            const listingProvider = (listing as any).provider?._id ?? (listing as any).provider ?? provider._id;
             const payload = {
                 listing: listing._id,
+                provider: listingProvider,
                 name: seed.name,
                 price: {
                     amount: seed.amount,
@@ -156,6 +159,11 @@ export async function createListingAddOns(
                 await existing.save();
                 logger.debug(`Listing add-on '${seed.name}' (${seedTag}) already exists; updated fields`);
             }
+
+            await Listing.updateOne(
+                {_id: listing._id},
+                {$addToSet: {listingAddOns: existing._id}},
+            );
 
             listingAddOns.push(existing);
             bySeedKey[seed.seedKey] = existing;
