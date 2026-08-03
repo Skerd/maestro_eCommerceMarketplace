@@ -69,11 +69,9 @@ const TaskRequestSchema = new Schema<ITaskRequest>(
             },
             permissions: {
                 self: {
-                    read: "no-permission",
                     write: "no-permission",
                 },
                 others: {
-                    read: "no-permission",
                     write: "no-permission",
                 }
             }
