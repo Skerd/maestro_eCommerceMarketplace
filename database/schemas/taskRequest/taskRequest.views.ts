@@ -21,11 +21,11 @@ export const taskRequestSheetView: ViewConfig = {
                     props: { columns: 1 },
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: { read: "title" },
                             field: {
                                 name: "title",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "title",
                                 widgetProps: { icon: "#Tag" },
                             },
@@ -37,21 +37,21 @@ export const taskRequestSheetView: ViewConfig = {
                     props: { columns: 2 },
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: { read: "status" },
                             field: {
                                 name: "status",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "status",
                                 widgetProps: { icon: "#Tag", languageKeyCategory: "taskRequestStatus" },
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: { read: "category" },
                             field: {
                                 name: "category",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "category",
                                 widgetProps: {
                                     icon: "#Folder",
@@ -64,11 +64,11 @@ export const taskRequestSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: { read: "requester" },
                             field: {
                                 name: "requester",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "requester",
                                 widgetProps: {
                                     icon: "#User",
@@ -79,11 +79,11 @@ export const taskRequestSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: { read: "budgetMin" },
                             field: {
                                 name: "budgetMin",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "budgetMin",
                                 widgetProps: {
                                     icon: "#DollarSign",
@@ -94,11 +94,11 @@ export const taskRequestSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: { read: "budgetMax" },
                             field: {
                                 name: "budgetMax",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "budgetMax",
                                 widgetProps: {
                                     icon: "#DollarSign",
@@ -109,11 +109,11 @@ export const taskRequestSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: { read: "currency" },
                             field: {
                                 name: "currency",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "currency",
                                 widgetProps: {
                                     icon: "#DollarSign",
@@ -128,11 +128,11 @@ export const taskRequestSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: { read: "expiresAt" },
                             field: {
                                 name: "expiresAt",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "expiresAt",
                                 widgetProps: { icon: "#Calendar", format: "date" },
                             },
@@ -155,11 +155,11 @@ export const taskRequestSheetView: ViewConfig = {
                             props: { columns: 3 },
                             children: [
                                 {
-                                    render: "#SmallInfoCard",
+                                    render: "#DisplayCard",
                                     permissions: { read: "address" },
                                     field: {
                                         name: "address.country.name",
-                                        widget: "#SmallInfoCard",
+                                        widget: "#DisplayCard",
                                         label: "country",
                                         widgetProps: {
                                             icon: "#Globe",
@@ -171,11 +171,11 @@ export const taskRequestSheetView: ViewConfig = {
                                     },
                                 },
                                 {
-                                    render: "#SmallInfoCard",
+                                    render: "#DisplayCard",
                                     permissions: { read: "address" },
                                     field: {
                                         name: "address.state.name",
-                                        widget: "#SmallInfoCard",
+                                        widget: "#DisplayCard",
                                         label: "state",
                                         widgetProps: {
                                             icon: "#MapPin",
@@ -187,11 +187,11 @@ export const taskRequestSheetView: ViewConfig = {
                                     },
                                 },
                                 {
-                                    render: "#SmallInfoCard",
+                                    render: "#DisplayCard",
                                     permissions: { read: "address" },
                                     field: {
                                         name: "address.city.name",
-                                        widget: "#SmallInfoCard",
+                                        widget: "#DisplayCard",
                                         label: "city",
                                         widgetProps: {
                                             icon: "#Building",
@@ -209,11 +209,11 @@ export const taskRequestSheetView: ViewConfig = {
                             props: { columns: 1 },
                             children: [
                                 {
-                                    render: "#SmallInfoCard",
+                                    render: "#DisplayCard",
                                     permissions: { read: "address" },
                                     field: {
                                         name: "address.street",
-                                        widget: "#SmallInfoCard",
+                                        widget: "#DisplayCard",
                                         label: "street",
                                         widgetProps: { icon: "#MapPin" },
                                     },
@@ -225,31 +225,31 @@ export const taskRequestSheetView: ViewConfig = {
                             props: { columns: 3 },
                             children: [
                                 {
-                                    render: "#SmallInfoCard",
+                                    render: "#DisplayCard",
                                     permissions: { read: "address" },
                                     field: {
                                         name: "address.postalCode",
-                                        widget: "#SmallInfoCard",
+                                        widget: "#DisplayCard",
                                         label: "postalCode",
                                         widgetProps: { icon: "#Mail" },
                                     },
                                 },
                                 {
-                                    render: "#SmallInfoCard",
+                                    render: "#DisplayCard",
                                     permissions: { read: "address" },
                                     field: {
                                         name: "address.latitude",
-                                        widget: "#SmallInfoCard",
+                                        widget: "#DisplayCard",
                                         label: "latitude",
                                         widgetProps: { icon: "#IconMapPin", format: "locale" },
                                     },
                                 },
                                 {
-                                    render: "#SmallInfoCard",
+                                    render: "#DisplayCard",
                                     permissions: { read: "address" },
                                     field: {
                                         name: "address.longitude",
-                                        widget: "#SmallInfoCard",
+                                        widget: "#DisplayCard",
                                         label: "longitude",
                                         widgetProps: { icon: "#IconMapPin", format: "locale" },
                                     },

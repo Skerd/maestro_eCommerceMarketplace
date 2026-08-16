@@ -21,21 +21,21 @@ export const promotionSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "name"},
                             field: {
                                 name: "name",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "name",
                                 widgetProps: {icon: "#Tag"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "listing"},
                             field: {
                                 name: "listing",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "listing",
                                 widgetProps: {
                                     icon: "#LayoutList",
@@ -52,47 +52,47 @@ export const promotionSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "type"},
                             field: {
                                 name: "type",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "type",
                                 widgetProps: {
                                     icon: "#Tag",
-                                    languageKeyCategory: "type_values",
+                                    languageKeyCategory: "type_values", type: "enum",
                                 },
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "lifecycleStatus"},
                             field: {
                                 name: "lifecycleStatus",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "lifecycleStatus",
                                 widgetProps: {
                                     icon: "#PlayerPause",
-                                    languageKeyCategory: "lifecycleStatuses",
+                                    languageKeyCategory: "lifecycleStatuses", type: "enum",
                                 },
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "startAt"},
                             field: {
                                 name: "startAt",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "startAt",
                                 widgetProps: {icon: "#Calendar"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "endAt"},
                             field: {
                                 name: "endAt",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "endAt",
                                 widgetProps: {icon: "#Calendar"},
                             },

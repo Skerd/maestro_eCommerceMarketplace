@@ -30,42 +30,43 @@ export const providerProfileSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "user"},
                             field: {
                                 name: "user",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "user",
                                 widgetProps: {
                                     icon: "#User",
                                     valuePath: ["user.fullName", "user.name"],
                                     joinSeparator: " ",
+                                    type: "user",
                                 },
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             field: {
                                 name: "averageRating",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "rating",
                                 widgetProps: {icon: "#Star", format: "locale"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             field: {
                                 name: "reviewCount",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "ratingCount",
                                 widgetProps: {icon: "#MessageSquare", format: "locale"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             field: {
                                 name: "completionRate",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "completionRate",
                                 widgetProps: {icon: "#CheckCircle", format: "locale"},
                             },
@@ -83,11 +84,11 @@ export const providerProfileSheetView: ViewConfig = {
                     props: {columns: 1},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "skills"},
                             field: {
                                 name: "skills",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "skills",
                                 widgetProps: {icon: "#Tag", valueType: "stringBadgeList"},
                             },

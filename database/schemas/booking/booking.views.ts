@@ -20,11 +20,11 @@ export const bookingSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "order"},
                             field: {
                                 name: "order",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "order",
                                 widgetProps: {
                                     icon: "#Package",
@@ -38,45 +38,46 @@ export const bookingSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "provider"},
                             field: {
                                 name: "provider",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "provider",
                                 widgetProps: {
                                     icon: "#User",
                                     valuePath: ["provider.fullName", "provider.name"],
                                     joinSeparator: " ",
+                                    type: "user",
                                 },
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "startAt"},
                             field: {
                                 name: "startAt",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "startAt",
-                                widgetProps: {icon: "#Calendar", format: "dateTime"},
+                                widgetProps: {icon: "#Calendar", format: "dateTime", type: "dateTime"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "endAt"},
                             field: {
                                 name: "endAt",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "endAt",
-                                widgetProps: {icon: "#Calendar", format: "dateTime"},
+                                widgetProps: {icon: "#Calendar", format: "dateTime", type: "dateTime"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "timezone"},
                             field: {
                                 name: "timezone",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "timezone",
                                 widgetProps: {icon: "#Globe"},
                             },

@@ -20,11 +20,11 @@ export const orderDeliverySheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "order"},
                             field: {
                                 name: "orderId",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "order",
                                 widgetProps: {icon: "#Package"},
                             },

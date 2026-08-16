@@ -22,11 +22,11 @@ export const listingFlagSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "listing"},
                             field: {
                                 name: "listing",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "listing",
                                 widgetProps: {
                                     icon: "#LayoutList",
@@ -40,37 +40,38 @@ export const listingFlagSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "status"},
                             field: {
                                 name: "status",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "status",
-                                widgetProps: {icon: "#Tag", languageKeyCategory: "status_values"},
+                                widgetProps: {icon: "#Tag", languageKeyCategory: "status_values", type: "enum"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "reason"},
                             field: {
                                 name: "reason",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "reason",
-                                widgetProps: {icon: "#Flag", languageKeyCategory: "reason_values"},
+                                widgetProps: {icon: "#Flag", languageKeyCategory: "reason_values", type: "enum"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "user"},
                             field: {
                                 name: "user",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "user",
                                 widgetProps: {
                                     icon: "#User",
                                     valuePath: ["user.name", "user.surname"],
                                     joinSeparator: " ",
                                     linkedRefPath: "user",
+                                    type: "user",
                                 },
                             },
                         },

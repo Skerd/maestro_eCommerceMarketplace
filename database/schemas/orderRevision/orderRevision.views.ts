@@ -20,31 +20,31 @@ export const orderRevisionSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "order"},
                             field: {
                                 name: "order",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "order",
                                 widgetProps: {icon: "#Package", valuePath: ["order", "_id"]},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "delivery"},
                             field: {
                                 name: "delivery",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "delivery",
                                 widgetProps: {icon: "#Truck", valuePath: ["delivery", "_id"]},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "requestedBy"},
                             field: {
                                 name: "requestedBy",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "requestedBy",
                                 widgetProps: {icon: "#User", valuePath: ["requestedBy", "fullName"]},
                             },

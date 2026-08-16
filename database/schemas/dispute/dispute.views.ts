@@ -21,11 +21,11 @@ export const disputeSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "order"},
                             field: {
                                 name: "order",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "order",
                                 widgetProps: {
                                     icon: "#Package",
@@ -45,16 +45,17 @@ export const disputeSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "initiator"},
                             field: {
                                 name: "initiator",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "initiator",
                                 widgetProps: {
                                     icon: "#User",
                                     valuePath: ["initiator.name", "initiator.surname"],
                                     joinSeparator: " ",
+                                    type: "user",
                                 },
                             },
                         },

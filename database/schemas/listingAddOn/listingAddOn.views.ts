@@ -21,21 +21,21 @@ export const listingAddOnSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "name"},
                             field: {
                                 name: "name",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "name",
                                 widgetProps: {icon: "#IconLabel"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "listing"},
                             field: {
                                 name: "listing",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "listing",
                                 widgetProps: {
                                     icon: "#LayoutList",
@@ -49,11 +49,11 @@ export const listingAddOnSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "provider"},
                             field: {
                                 name: "provider",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "provider",
                                 widgetProps: {
                                     icon: "#User",
@@ -63,11 +63,11 @@ export const listingAddOnSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "price"},
                             field: {
                                 name: "price.amount",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "priceAmount",
                                 widgetProps: {
                                     icon: "#DollarSign",
@@ -78,11 +78,11 @@ export const listingAddOnSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "price"},
                             field: {
                                 name: "price.currency",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "currency",
                                 widgetProps: {
                                     icon: "#Coins",
@@ -97,11 +97,11 @@ export const listingAddOnSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "deliveryDays"},
                             field: {
                                 name: "deliveryDays",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "deliveryDays",
                                 widgetProps: {icon: "#Clock", format: "locale"},
                             },

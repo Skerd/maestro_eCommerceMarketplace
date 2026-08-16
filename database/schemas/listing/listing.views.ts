@@ -21,31 +21,31 @@ export const listingSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "title"},
                             field: {
                                 name: "title",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "title",
                                 widgetProps: {icon: "#IconLabel"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "status"},
                             field: {
                                 name: "status",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "status",
-                                widgetProps: {icon: "#Tag", languageKeyCategory: "listingStatus"},
+                                widgetProps: {icon: "#Tag", languageKeyCategory: "listingStatus", type: "enum"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "category"},
                             field: {
                                 name: "category",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "category",
                                 widgetProps: {
                                     icon: "#Folder",
@@ -58,25 +58,26 @@ export const listingSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "provider"},
                             field: {
                                 name: "provider",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "provider",
                                 widgetProps: {
                                     icon: "#User",
                                     valuePath: ["provider.name", "provider.surname"],
                                     joinSeparator: " ",
+                                    type: "user",
                                 },
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "price"},
                             field: {
                                 name: "price",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "price",
                                 widgetProps: {
                                     icon: "#DollarSign",
@@ -87,11 +88,11 @@ export const listingSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: { read: "priceCurrency" },
                             field: {
                                 name: "priceCurrency",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "priceCurrency",
                                 widgetProps: {
                                     icon: "#DollarSign",
@@ -106,21 +107,21 @@ export const listingSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "pricingType"},
                             field: {
                                 name: "pricingType",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "pricingType",
-                                widgetProps: {icon: "#Tag", languageKeyCategory: "listingPricingType"},
+                                widgetProps: {icon: "#Tag", languageKeyCategory: "listingPricingType", type: "enum"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "deliveryDays"},
                             field: {
                                 name: "deliveryDays",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "deliveryDays",
                                 widgetProps: {icon: "#Clock", format: "locale"},
                             },
@@ -142,11 +143,11 @@ export const listingSheetView: ViewConfig = {
                             props: {columns: 3},
                             children: [
                                 {
-                                    render: "#SmallInfoCard",
+                                    render: "#DisplayCard",
                                     permissions: {read: "address"},
                                     field: {
                                         name: "address.country.name",
-                                        widget: "#SmallInfoCard",
+                                        widget: "#DisplayCard",
                                         label: "country",
                                         widgetProps: {
                                             icon: "#Globe",
@@ -158,11 +159,11 @@ export const listingSheetView: ViewConfig = {
                                     },
                                 },
                                 {
-                                    render: "#SmallInfoCard",
+                                    render: "#DisplayCard",
                                     permissions: {read: "address"},
                                     field: {
                                         name: "address.state.name",
-                                        widget: "#SmallInfoCard",
+                                        widget: "#DisplayCard",
                                         label: "state",
                                         widgetProps: {
                                             icon: "#MapPin",
@@ -174,11 +175,11 @@ export const listingSheetView: ViewConfig = {
                                     },
                                 },
                                 {
-                                    render: "#SmallInfoCard",
+                                    render: "#DisplayCard",
                                     permissions: {read: "address"},
                                     field: {
                                         name: "address.city.name",
-                                        widget: "#SmallInfoCard",
+                                        widget: "#DisplayCard",
                                         label: "city",
                                         widgetProps: {
                                             icon: "#Building",
@@ -226,11 +227,11 @@ export const listingSheetView: ViewConfig = {
                     props: {columns: 1},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "tags"},
                             field: {
                                 name: "tags",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "tags",
                                 widgetProps: {icon: "#Tag", valueType: "stringBadgeList"},
                             },

@@ -20,21 +20,21 @@ export const orderSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "status"},
                             field: {
                                 name: "status",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "status",
-                                widgetProps: {icon: "#Tag", languageKeyCategory: "orderStatus"},
+                                widgetProps: {icon: "#Tag", languageKeyCategory: "orderStatus", type: "enum"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "amount"},
                             field: {
                                 name: "amount",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "amount",
                                 widgetProps: {
                                     icon: "#DollarSign",
@@ -45,49 +45,51 @@ export const orderSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "customer"},
                             field: {
                                 name: "customer",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "customer",
                                 widgetProps: {
                                     icon: "#User",
                                     valuePath: ["customer.name", "customer.surname"],
                                     joinSeparator: " ",
+                                    type: "user",
                                 },
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "provider"},
                             field: {
                                 name: "provider",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "provider",
                                 widgetProps: {
                                     icon: "#User",
                                     valuePath: ["provider.name", "provider.surname"],
                                     joinSeparator: " ",
+                                    type: "user",
                                 },
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "deliveryDueDate"},
                             field: {
                                 name: "deliveryDueDate",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "deliveryDueDate",
-                                widgetProps: {icon: "#Calendar", format: "date"},
+                                widgetProps: {icon: "#Calendar", format: "date", type: "date"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "currency"},
                             field: {
                                 name: "currency",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "currency",
                                 widgetProps: {
                                     icon: "#Coins",
@@ -114,11 +116,11 @@ export const orderSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "listing"},
                             field: {
                                 name: "listing",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "listingLabel",
                                 widgetProps: {
                                     icon: "#Package",
@@ -132,11 +134,11 @@ export const orderSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "taskRequest"},
                             field: {
                                 name: "taskRequest",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "taskRequest",
                                 widgetProps: {
                                     icon: "#Briefcase",
@@ -150,11 +152,11 @@ export const orderSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "bid"},
                             field: {
                                 name: "bid",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "bid",
                                 widgetProps: {
                                     icon: "#FileText",

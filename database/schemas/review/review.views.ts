@@ -20,11 +20,11 @@ export const reviewSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "order"},
                             field: {
                                 name: "order",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "order",
                                 widgetProps: {
                                     icon: "#Package",
@@ -44,35 +44,36 @@ export const reviewSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "reviewer"},
                             field: {
                                 name: "reviewer",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "reviewer",
                                 widgetProps: {
                                     icon: "#User",
                                     valuePath: ["reviewer.name", "reviewer.surname"],
                                     joinSeparator: " ",
+                                    type: "user",
                                 },
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "rating"},
                             field: {
                                 name: "rating",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "rating",
                                 widgetProps: {icon: "#Star"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "listing"},
                             field: {
                                 name: "listing",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "listing",
                                 widgetProps: {
                                     icon: "#LayoutList",

@@ -1,4 +1,5 @@
 import type {ViewConfig} from "armonia/src/modules/core/api/auxiliary/private/viewConfig";
+import {lifecycleSheetGroup} from "@coreModule/database/schemas/shared/lifecycleSheetGroup";
 
 export const listingCategorySheetView: ViewConfig = {
     model: "listingcategories",
@@ -20,41 +21,41 @@ export const listingCategorySheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "name"},
                             field: {
                                 name: "name",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "name",
                                 widgetProps: {icon: "#Tag"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "slug"},
                             field: {
                                 name: "slug",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "slug",
                                 widgetProps: {icon: "#IconInfoCircle"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "order"},
                             field: {
                                 name: "order",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "order",
-                                widgetProps: {icon: "#Hash"},
+                                widgetProps: {icon: "#Hash", type: "number"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "parentListingCategory"},
                             field: {
                                 name: "parentListingCategory.name",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "parentListingCategory",
                                 widgetProps: {
                                     icon: "#IconCategory2",
@@ -69,6 +70,7 @@ export const listingCategorySheetView: ViewConfig = {
                 },
             ],
         },
+        lifecycleSheetGroup,
     ],
 };
 

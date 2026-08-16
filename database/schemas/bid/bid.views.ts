@@ -20,21 +20,21 @@ export const bidSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "status"},
                             field: {
                                 name: "status",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "status",
                                 widgetProps: {icon: "#Tag", languageKeyCategory: "bidStatus"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "amount"},
                             field: {
                                 name: "amount",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "amount",
                                 widgetProps: {
                                     icon: "#DollarSign",
@@ -45,21 +45,21 @@ export const bidSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "deliveryDays"},
                             field: {
                                 name: "deliveryDays",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "deliveryDays",
                                 widgetProps: {icon: "#Calendar"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "currency"},
                             field: {
                                 name: "currency",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "currency",
                                 widgetProps: {
                                     icon: "#Coins",
@@ -74,11 +74,11 @@ export const bidSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "taskRequest"},
                             field: {
                                 name: "taskRequest",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "taskRequest",
                                 widgetProps: {
                                     icon: "#Briefcase",
@@ -92,11 +92,11 @@ export const bidSheetView: ViewConfig = {
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "bidder"},
                             field: {
                                 name: "bidder",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "bidder",
                                 widgetProps: {
                                     icon: "#User",

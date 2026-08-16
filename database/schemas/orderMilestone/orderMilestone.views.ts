@@ -20,51 +20,51 @@ export const orderMilestoneSheetView: ViewConfig = {
                     props: {columns: 2},
                     children: [
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "order"},
                             field: {
                                 name: "orderId",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "order",
                                 widgetProps: {icon: "#Package"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "currency"},
                             field: {
                                 name: "currencySymbol",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "currency",
                                 widgetProps: {icon: "#Coins"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "amount"},
                             field: {
                                 name: "amount",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "amount",
                                 widgetProps: {icon: "#DollarSign"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "status"},
                             field: {
                                 name: "status",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "status",
                                 widgetProps: {icon: "#Tag"},
                             },
                         },
                         {
-                            render: "#SmallInfoCard",
+                            render: "#DisplayCard",
                             permissions: {read: "orderIndex"},
                             field: {
                                 name: "orderIndex",
-                                widget: "#SmallInfoCard",
+                                widget: "#DisplayCard",
                                 label: "orderIndex",
                                 widgetProps: {icon: "#Hash"},
                             },
