@@ -142,10 +142,12 @@ export async function createBookings(
             const {startAt, endAt} = resolveBookingWindow(seed);
             const seedTag = demoSeedTag(seed.seedKey);
 
+            // Keyed on {company, order} only — `startAt` is relative to the run date, so
+            // including it would miss on a later day and collide with the unique index
+            // on `order`, which already allows just one booking per order.
             let existing = await Booking.findOne({
                 company: company._id,
                 order: order._id,
-                startAt,
             });
 
             const payload = {
