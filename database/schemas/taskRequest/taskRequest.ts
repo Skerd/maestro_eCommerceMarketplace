@@ -5,6 +5,7 @@ import { ICurrency } from "@coreModule/database/schemas/currency/currency";
 import { IListingCategory } from "@eCommerceMarketplaceModule/database/schemas/listingCategory/listingCategory";
 import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
+import publicMediaPlugin from "@coreModule/database/plugins/publicMediaPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
 import softDeletePlugin from "@coreModule/database/plugins/softDeletePlugin";
 import lifeCyclePlugin from "@coreModule/database/plugins/lifeCyclePlugin";
@@ -281,6 +282,7 @@ TaskRequestSchema.pre("save", function (next) {
 });
 
 ownershipPlugin(TaskRequestSchema);
+publicMediaPlugin(TaskRequestSchema, {schemaDef: TaskRequestSchemaDef});
 auditPlugin(TaskRequestSchema);
 softDeletePlugin(TaskRequestSchema);
 lifeCyclePlugin(TaskRequestSchema);

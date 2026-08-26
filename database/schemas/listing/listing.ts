@@ -7,6 +7,7 @@ import { ICurrency } from "@coreModule/database/schemas/currency/currency";
 import { normalizeSchemaPermissions } from "@coreModule/database/utilities";
 import { COLUMN_TYPE } from "armonia/src/modules/core/database/filter/typeOperators";
 import ownershipPlugin from "@coreModule/database/plugins/ownershipPlugin";
+import publicMediaPlugin from "@coreModule/database/plugins/publicMediaPlugin";
 import auditPlugin from "@coreModule/database/plugins/auditPlugin";
 import softDeletePlugin from "@coreModule/database/plugins/softDeletePlugin";
 import {
@@ -318,6 +319,7 @@ ListingSchema.pre("save", function (next) {
 });
 
 ownershipPlugin(ListingSchema);
+publicMediaPlugin(ListingSchema, {schemaDef: ListingSchemaDef});
 auditPlugin(ListingSchema);
 softDeletePlugin(ListingSchema);
 lifeCyclePlugin(ListingSchema);
