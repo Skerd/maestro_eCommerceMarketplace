@@ -57,8 +57,8 @@ All order lifecycle mutations live on **`OrderActions`** (`POST /api/eCommerceMa
 |-----|-----|---------|
 | `autoAcceptDays` | `ECOMMERCE_MARKETPLACE_AUTO_ACCEPT_DAYS` | `3` |
 | `maxRevisions` | `ECOMMERCE_MARKETPLACE_MAX_REVISIONS` | `3` |
-| `stripeConnectReturnUrl` | `STRIPE_CONNECT_RETURN_URL` | derived from `CLIENT_SIDE.HOST` |
-| `stripeConnectRefreshUrl` | `STRIPE_CONNECT_REFRESH_URL` | derived from `CLIENT_SIDE.HOST` |
+| `stripeConnectReturnUrl` | `STRIPE_CONNECT_RETURN_URL` | derived from `clientHostFor("core")` |
+| `stripeConnectRefreshUrl` | `STRIPE_CONNECT_REFRESH_URL` | derived from `clientHostFor("core")` |
 
 ## Cron handlers
 

@@ -3,7 +3,7 @@
  * Operational limits and Connect onboarding redirects live here — not in core.
  */
 
-import {CLIENT_SIDE} from "@coreModule/environment";
+import {clientHostFor} from "@coreModule/environment";
 
 function parseIntEnv(key: string, fallback: number): number {
     const raw = process.env[key];
@@ -24,7 +24,7 @@ export type ECommerceMarketplaceConfig = {
 };
 
 function defaultConnectUrls(): {returnUrl: string; refreshUrl: string} {
-    const base = (CLIENT_SIDE.HOST || "").replace(/\/+$/, "");
+    const base = clientHostFor("core");
     return {
         returnUrl: base ? `${base}/eCommerceMarketplace/providerprofile?connect=return` : "",
         refreshUrl: base ? `${base}/eCommerceMarketplace/providerprofile?connect=refresh` : "",
