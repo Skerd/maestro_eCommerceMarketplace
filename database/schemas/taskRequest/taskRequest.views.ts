@@ -163,6 +163,7 @@ export const taskRequestSheetView: ViewConfig = {
                                         label: "country",
                                         widgetProps: {
                                             icon: "#Globe",
+                                            flagCodePath: "address.country.code",
                                             linkedRefPath: "address.country",
                                             linkedSheetModel: "countries",
                                             linkedSheetWidget: "#CountrySheetView",

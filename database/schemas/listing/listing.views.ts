@@ -151,6 +151,7 @@ export const listingSheetView: ViewConfig = {
                                         label: "country",
                                         widgetProps: {
                                             icon: "#Globe",
+                                            flagCodePath: "address.country.code",
                                             linkedRefPath: "address.country",
                                             linkedSheetModel: "countries",
                                             linkedSheetWidget: "#CountrySheetView",
