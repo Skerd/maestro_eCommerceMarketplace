@@ -2,7 +2,7 @@ import {registerRoomDisplayNames} from "@coreModule/websocket/roomRegistry";
 
 /**
  * Site rooms for eCommerce marketplace panel paths
- * (e.g. `/eCommerceMarketplace/bookings` → room `bookings` via withSiteRoom).
+ * (e.g. `/eCommerceMarketplace/bookings` → room `bookings` via SiteRoomProvider).
  *
  * Keep in sync with eCommerceMarketplace sidebarContribution + routeConfigContribution.
  */
