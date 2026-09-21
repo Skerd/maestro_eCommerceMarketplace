@@ -55,6 +55,13 @@ const OrderMilestoneSchema = new Schema<IOrderMilestone>(
             type: SchemaTypes.String,
             enum: ["pending", "released", "delivered"],
             default: "pending",
+            dynamicTableConfiguration: {
+                enumTones: {
+                    pending:     "warning",
+                    released:    "success",
+                    delivered:   "success",
+                },
+            },
         },
         orderIndex: {
             type: SchemaTypes.Number,

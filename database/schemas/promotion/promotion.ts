@@ -66,6 +66,13 @@ const PromotionSchema = new Schema<IPromotion>(
             enum: ["active", "paused", "stopped"],
             default: "active",
             required: true,
+            dynamicTableConfiguration: {
+                enumTones: {
+                    active:    "success",
+                    paused:    "warning",
+                    stopped:   "danger",
+                },
+            },
         },
         stopReason: {
             type: SchemaTypes.String,

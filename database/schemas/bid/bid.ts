@@ -80,6 +80,13 @@ const BidSchema = new Schema<IBid>(
             type: SchemaTypes.String,
             enum: ["pending", "accepted", "rejected"],
             default: "pending",
+            dynamicTableConfiguration: {
+                enumTones: {
+                    pending:    "warning",
+                    accepted:   "success",
+                    rejected:   "danger",
+                },
+            },
         },
     },
     {

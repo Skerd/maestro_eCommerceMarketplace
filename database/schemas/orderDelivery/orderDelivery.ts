@@ -48,6 +48,13 @@ const OrderDeliverySchema = new Schema<IOrderDelivery>(
             type: SchemaTypes.String,
             enum: ["submitted", "accepted", "revision_requested"],
             default: "submitted",
+            dynamicTableConfiguration: {
+                enumTones: {
+                    submitted:            "info",
+                    accepted:             "success",
+                    revision_requested:   "warning",
+                },
+            },
         },
     },
     {

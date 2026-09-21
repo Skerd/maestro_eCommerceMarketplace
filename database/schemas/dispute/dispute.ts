@@ -55,6 +55,14 @@ const DisputeSchema = new Schema<IDispute>(
             type: SchemaTypes.String,
             enum: ["open", "under_review", "resolved", "closed"],
             default: "open",
+            dynamicTableConfiguration: {
+                enumTones: {
+                    open:           "info",
+                    under_review:   "warning",
+                    resolved:       "success",
+                    closed:         "neutral",
+                },
+            },
         },
         resolution: {
             type: SchemaTypes.String,

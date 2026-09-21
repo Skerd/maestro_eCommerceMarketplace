@@ -122,7 +122,14 @@ const ListingSchema = new Schema<IListing>(
             permissions: {
                 self: {write: "no-permission"},
                 others: {write: "no-permission"},
-            }
+            },
+            dynamicTableConfiguration: {
+                enumTones: {
+                    draft:      "neutral",
+                    active:     "success",
+                    inactive:   "neutral",
+                },
+            },
         },
         pricingType: {
             type: SchemaTypes.String,

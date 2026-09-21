@@ -226,6 +226,11 @@ const TaskRequestSchema = new Schema<ITaskRequest>(
             enum: ["open", "closed", "awarded"],
             default: "open",
             dynamicTableConfiguration: {
+                enumTones: {
+                    open:      "info",
+                    closed:    "neutral",
+                    awarded:   "success",
+                },
                 filterable: true,
                 sortable: true,
             },

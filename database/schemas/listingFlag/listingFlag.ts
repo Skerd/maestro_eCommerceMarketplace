@@ -65,6 +65,13 @@ const ListingFlagSchema = new Schema<IListingFlag>(
             enum: ["pending", "reviewed", "dismissed"],
             default: "pending",
             permissions: { self: { publicRead: true } },
+            dynamicTableConfiguration: {
+                enumTones: {
+                    pending:     "warning",
+                    reviewed:    "success",
+                    dismissed:   "neutral",
+                },
+            },
         },
         resolution: {
             type: SchemaTypes.String,

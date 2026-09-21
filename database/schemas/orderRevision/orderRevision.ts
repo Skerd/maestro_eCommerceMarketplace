@@ -64,6 +64,12 @@ const OrderRevisionSchema = new Schema<IOrderRevision>(
             type: SchemaTypes.String,
             enum: ["pending", "completed"],
             default: "pending",
+            dynamicTableConfiguration: {
+                enumTones: {
+                    pending:     "warning",
+                    completed:   "success",
+                },
+            },
         },
     },
     {

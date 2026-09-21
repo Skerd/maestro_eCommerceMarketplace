@@ -569,7 +569,7 @@ const listingFormFields: ViewConfig["nodes"] = [
                 render: "#Field",
                 field: {
                     name: "tags",
-                    widget: "#StringArrayField",
+                    widget: "#StringArrayInput",
                     label: "form.tagsLabel",
                     placeholder: "form.tagsPlaceholder",
                     widgetProps: {
@@ -582,7 +582,7 @@ const listingFormFields: ViewConfig["nodes"] = [
                 render: "#Field",
                 field: {
                     name: "requirements",
-                    widget: "#StringArrayField",
+                    widget: "#StringArrayInput",
                     label: "form.requirementsLabel",
                     placeholder: "form.requirementsPlaceholder",
                     widgetProps: {

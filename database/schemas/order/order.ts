@@ -93,6 +93,15 @@ const OrderSchema = new Schema<IOrder>(
             type: SchemaTypes.String,
             enum: ["pending", "accepted", "in_progress", "completed", "cancelled"],
             default: "pending",
+            dynamicTableConfiguration: {
+                enumTones: {
+                    pending:       "warning",
+                    accepted:      "success",
+                    in_progress:   "warning",
+                    completed:     "success",
+                    cancelled:     "danger",
+                },
+            },
         },
         deliveryDueDate: {
             type: SchemaTypes.Date,

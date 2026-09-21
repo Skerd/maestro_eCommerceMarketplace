@@ -226,7 +226,7 @@ export const providerProfileEditFormView: ViewConfig = {
                             render: "#Field",
                             field: {
                                 name: "skills",
-                                widget: "#StringArrayField",
+                                widget: "#StringArrayInput",
                                 label: "form.skillsLabel",
                                 placeholder: "form.skillsPlaceholder",
                                 widgetProps: {
